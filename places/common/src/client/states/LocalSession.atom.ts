@@ -3,6 +3,10 @@ import { Atom, atom } from "@rbxts/charm"
 
 const defaultProfile: IUserSession = {
     currency: 0,
+    dates: {
+        sessionStartDate: DateTime.now().UnixTimestamp,
+        lastDeconnectionDate: DateTime.now().UnixTimestamp,
+    },
     dailyStats: {},
     UtcLastConnection: 0,
     UtcOffset: 0,

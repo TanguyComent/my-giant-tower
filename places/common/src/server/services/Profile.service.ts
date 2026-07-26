@@ -35,16 +35,14 @@ export class ProfilesService implements OnStart, OnTick {
         this.janitor.Add(playerRemoving, "Disconnect");
 
         CommonFunctions.isProfileLoaded.setCallback((player) => this.isProfileLoaded(player))
-        CommonFunctions.getSession.setCallback((player) => this.getPlayerSession(player.UserId))
+        CommonFunctions.getSession.setCallback((player) => this.getPlayerSession(player.User.Id))
     }
 
-    onTick(dt: number): void {
-        for (const [userId] of this.playerSessionMap) {
-            this.updateField(userId, ["globalStats", "playTime"], (playTime) => playTime + dt, false)
-        }
-    }
+    onTick(dt: number): void {}
 
     private transformRemoteDataToSession(remoteData: LastRemoteDataType): IUserSession {
+        const now = DateTime.now().UnixTimestamp;
+
         return {
             currency: remoteData.currency,
             UtcLastConnection: remoteData.UtcLastConnection,
@@ -54,38 +52,53 @@ export class ProfilesService implements OnStart, OnTick {
             boughtGamePasses: remoteData.boughtGamePasses,
             purchases: remoteData.purchases,
             settings: remoteData.settings,
+            dates: {
+                ...remoteData.dates,
+                sessionStartDate: now,
+            }
         }
     }
 
     private transformSessionToRemoteData(session: IUserSession): LastRemoteDataType {
+        const now = DateTime.now().UnixTimestamp;
+        print(`[ProfilesService.transformSessionToRemoteData] - Transforming session to remote data`)
+
         return {
             currentVersion: 1,
             currency: session.currency,
             UtcLastConnection: session.UtcLastConnection,
             UtcOffset: session.UtcOffset,
             dailyStats: session.dailyStats,
-            globalStats: session.globalStats,
+            globalStats: {
+                ...session.globalStats,
+                playTime: session.globalStats.playTime + (now - session.dates.sessionStartDate),
+            },
             boughtGamePasses: session.boughtGamePasses,
             purchases: session.purchases,
             settings: session.settings,
+            dates: {
+                ...session.dates,
+                sessionStartDate: now,
+                lastDeconnectionDate: now,
+            },
         }
     }
 
     private onPlayerAdded(player: Player) {
-        if (this.profiles.has(player.UserId)) return;
-        const profile = this.userStore.StartSessionAsync(tostring(player.UserId), {Cancel: () => player.Parent !== Players});
+        if (this.profiles.has(player.User.Id)) return;
+        const profile = this.userStore.StartSessionAsync(tostring(player.User.Id), {Cancel: () => player.Parent !== Players});
         const profileJanitor = new Janitor();
         if (!profile) {
-            warn(`Failed to load profile for player ${player.Name} (${player.UserId})`);
+            warn(`Failed to load profile for player ${player.Name} (${player.User.Id})`);
             player.Kick("Failed to load profile.");
             return
         }
 
-        profile.AddUserId(player.UserId);
+        profile.AddUserId(player.User.Id);
         profile.Data = Migrator.migrate(profile.Data);
         const lastSaveConnection = profile.OnLastSave.Connect((reason) => this.onLastSave.Fire(player, reason))
         profileJanitor.Add(lastSaveConnection, "Disconnect")
-        this.profiles.set(player.UserId, profile);
+        this.profiles.set(player.User.Id, profile);
         
         const sessionEndConnection = profile.OnSessionEnd.Connect(() => {
             this.onSessionEnd(player)
@@ -100,9 +113,9 @@ export class ProfilesService implements OnStart, OnTick {
             profile.EndSession()
         }
         
-        this.setPlayerSession(player.UserId, this.transformRemoteDataToSession(profile.Data))
+        this.setPlayerSession(player.User.Id, this.transformRemoteDataToSession(profile.Data))
         
-        const playerSession = this.getPlayerSession(player.UserId)
+        const playerSession = this.getPlayerSession(player.User.Id)
         if (!playerSession) {
             player.Kick("Failed to initialize session.");
             return;
@@ -117,19 +130,19 @@ export class ProfilesService implements OnStart, OnTick {
 
 
     private onPlayerRemoved(player: Player) {
-        const profile = this.profiles.get(player.UserId);
+        const profile = this.profiles.get(player.User.Id);
         
         if (profile) {
             profile.EndSession();
-            this.profiles.delete(player.UserId);
+            this.profiles.delete(player.User.Id);
         }
     }
 
     private beforeProfileSave(player: Player) {
-        const profile = this.profiles.get(player.UserId);
+        const profile = this.profiles.get(player.User.Id);
         if (!profile) return;
 
-        const session = this.getPlayerSession(player.UserId)
+        const session = this.getPlayerSession(player.User.Id)
         if (!session) return;
 
         profile.Data = this.transformSessionToRemoteData(session);
@@ -137,17 +150,17 @@ export class ProfilesService implements OnStart, OnTick {
 
     private onSessionEnd(player: Player) {
         this.tryResetDailyStats(player)
-        const profile = this.profiles.get(player.UserId);
+        const profile = this.profiles.get(player.User.Id);
         
         if (profile) {
             profile.EndSession();
         }
 
-        this.playerSessionMap.delete(player.UserId);
+        this.playerSessionMap.delete(player.User.Id);
     }
 
     isProfileLoaded(player: Player): boolean {
-        return this.playerSessionMap.has(player.UserId);
+        return this.playerSessionMap.has(player.User.Id);
     }
 
     setPlayerSession(playerId: number, data: IUserSession) {
@@ -155,8 +168,7 @@ export class ProfilesService implements OnStart, OnTick {
     }
 
     getPlayerSession(playerId: number): IUserSession | undefined {
-        const session = this.playerSessionMap.get(playerId) ? deepCopy(this.playerSessionMap.get(playerId)!) : undefined;
-        return session;
+        return this.playerSessionMap.get(playerId);
     }
 
     updateField<P extends PathsUtils.Path<IUserSession>>(
@@ -250,7 +262,7 @@ export class ProfilesService implements OnStart, OnTick {
     }
 
     private reloadOwnedGamePasses(player: Player) {
-        const playerSession = this.getPlayerSession(player.UserId);
+        const playerSession = this.getPlayerSession(player.User.Id);
         if (!playerSession) return;
 
         for (const gamePassId of Object.values(EGamePasses)) {
@@ -259,7 +271,7 @@ export class ProfilesService implements OnStart, OnTick {
             
             const ownsPass = MarketplaceService.UserOwnsGamePassAsync(player.User, gamePassId);
             if (ownsPass) {
-                this.updateField(player.UserId, ["boughtGamePasses"], (prev) => {
+                this.updateField(player.User.Id, ["boughtGamePasses"], (prev) => {
                     return {
                         ...prev,
                         [gamePassId as EGamePasses]: {
@@ -272,17 +284,17 @@ export class ProfilesService implements OnStart, OnTick {
     }
 
     public tryResetDailyStats(player: Player) {
-        const utcLastConnection = this.getField(player.UserId, ["UtcLastConnection"]) 
+        const utcLastConnection = this.getField(player.User.Id, ["UtcLastConnection"]) 
         if (utcLastConnection === undefined) {
-            this.actualizeUtcOffset(player.UserId)
-            this.actualizeLastConnectionDate(player.UserId)
+            this.actualizeUtcOffset(player.User.Id)
+            this.actualizeLastConnectionDate(player.User.Id)
             return
         }
 
-        const utcOffset = this.getField(player.UserId, ["UtcOffset"])
+        const utcOffset = this.getField(player.User.Id, ["UtcOffset"])
         if (utcOffset === undefined) {
-            this.actualizeUtcOffset(player.UserId)
-            this.actualizeLastConnectionDate(player.UserId)
+            this.actualizeUtcOffset(player.User.Id)
+            this.actualizeLastConnectionDate(player.User.Id)
             return
         }
 
@@ -293,17 +305,17 @@ export class ProfilesService implements OnStart, OnTick {
         const normalizedLastConnectionTimeStamp = DateTime.fromUniversalTime(localizedLastConnectionDate.Year, localizedLastConnectionDate.Month, localizedLastConnectionDate.Day, 0, 0, 0)
         const normalizedCurrentTimeStamp = DateTime.fromUniversalTime(currentLocalizedDate.Year, currentLocalizedDate.Month, currentLocalizedDate.Day, 0, 0, 0)
 
-        this.actualizeLastConnectionDate(player.UserId)
+        this.actualizeLastConnectionDate(player.User.Id)
 
         const hasBeenConnectedToday = normalizedLastConnectionTimeStamp.UnixTimestamp === normalizedCurrentTimeStamp.UnixTimestamp
         if (hasBeenConnectedToday) return
 
         const hasBrokenConnectionStreak = (normalizedCurrentTimeStamp.UnixTimestamp - 24 * 60 * 60) !== normalizedLastConnectionTimeStamp.UnixTimestamp
         if (hasBrokenConnectionStreak) {
-            this.actualizeUtcOffset(player.UserId)
+            this.actualizeUtcOffset(player.User.Id)
         }
 
-        this.resetDailyStats(player.UserId)
+        this.resetDailyStats(player.User.Id)
     }
 
     private resetDailyStats(userId: number) {

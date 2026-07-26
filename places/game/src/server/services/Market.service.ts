@@ -18,7 +18,7 @@ export class MarketService implements OnStart {
         MarketplaceService.ProcessReceipt = (receiptInfo) => this.processPurchase(receiptInfo);
         MarketplaceService.PromptGamePassPurchaseFinished.Connect((player, gamePassId, wasPurchased) => {
             if (!wasPurchased) return;
-            this.playerService.addGamePass(player.UserId, gamePassId as EGamePasses)
+            this.playerService.addGamePass(player.User.Id, gamePassId as EGamePasses)
         })
     } 
 

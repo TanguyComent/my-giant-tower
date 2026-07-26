@@ -3,6 +3,10 @@ import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 export interface IRemoteUserDataV1 {
     currentVersion: 1;
     UtcLastConnection: number | undefined;
+    dates: {
+        lastDeconnectionDate: number;
+        sessionStartDate: number;
+    }
     UtcOffset: number | undefined;
     currency: number;
     dailyStats: IDailyStatsV1;
