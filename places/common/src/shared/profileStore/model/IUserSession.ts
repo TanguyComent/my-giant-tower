@@ -2,6 +2,10 @@ import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 
 export interface IUserSession {
     UtcLastConnection: number | undefined;
+    dates: {
+        lastDeconnectionDate: number;
+        sessionStartDate: number;
+    }
     UtcOffset: number | undefined;
     currency: number;
     dailyStats: IDailyStats;

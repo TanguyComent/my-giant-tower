@@ -75,6 +75,14 @@
             }
         },
 
+        "Players": {
+            "$className": "Players",
+
+            "$properties": {
+                "CharacterAutoLoads": false
+            }
+        },
+
         "SoundService": {
             "$className": "SoundService",
 

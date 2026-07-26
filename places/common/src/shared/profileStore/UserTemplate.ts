@@ -4,6 +4,10 @@ export const UserTemplate: LastRemoteDataType = {
     currentVersion: 1,
     currency: 0,
     UtcLastConnection: undefined,
+    dates: {
+        sessionStartDate: DateTime.now().UnixTimestamp,
+        lastDeconnectionDate: DateTime.now().UnixTimestamp,
+    },
     UtcOffset: undefined,
     dailyStats: {},
     globalStats: {
