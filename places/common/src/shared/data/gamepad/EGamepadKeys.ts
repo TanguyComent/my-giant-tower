@@ -1,0 +1,18 @@
+export enum EGamepadKeys {
+    A = "A",
+    B = "B",
+    X = "X",
+    Y = "Y",
+    L1 = "L1",
+    L2 = "L2",
+    L3 = "L3",
+    R1 = "R1",
+    R2 = "R2",
+    R3 = "R3",
+    // SELECT = "SELECT",
+    // START = "START",
+    DPAD_LEFT = "DPAD_LEFT",
+    DPAD_RIGHT = "DPAD_RIGHT",
+    DPAD_UP = "DPAD_UP",
+    DPAD_DOWN = "DPAD_DOWN",
+}
