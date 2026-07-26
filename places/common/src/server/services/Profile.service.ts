@@ -61,7 +61,6 @@ export class ProfilesService implements OnStart, OnTick {
 
     private transformSessionToRemoteData(session: IUserSession): LastRemoteDataType {
         const now = DateTime.now().UnixTimestamp;
-        print(`[ProfilesService.transformSessionToRemoteData] - Transforming session to remote data`)
 
         return {
             currentVersion: 1,
