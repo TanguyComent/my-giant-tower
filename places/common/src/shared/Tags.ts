@@ -8,5 +8,7 @@ export namespace Tags {
     export const UNASSIGNED_PLOT_TAG = `Unassigned_${PLOT_TAG}`
     export const PLAYER_ASSIGNED_PLOT_TAG = (playerId: UserId) => `Player_${playerId}_${ASSIGNED_PLOT_TAG}`
 
-    
+    export const TOWER_PART_STAND_TAG = "TowerPartStand"
+    export const ASSIGNED_TOWER_PART_STAND_TAG = `Assigned_${TOWER_PART_STAND_TAG}`
+    export const PLAYER_ASSIGNED_TOWER_PART_STAND_TAG = (playerId: UserId) => `Player_${playerId}_${ASSIGNED_TOWER_PART_STAND_TAG}`
 }
