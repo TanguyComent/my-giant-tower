@@ -8,6 +8,7 @@ import { UserInputService } from "@rbxts/services"
 import { controllerAtom } from "../states/ControllerAtom"
 import { EController } from "@common/shared/data/player/EController"
 import { Hud } from "../interfaces/gui/screens/hud"
+import { Events } from "../Networking";
 
 @Controller()
 export class UserInterfaceController implements OnStart {
@@ -34,6 +35,9 @@ export class UserInterfaceController implements OnStart {
 
 		UserInputService.LastInputTypeChanged.Connect((lastInputType) => this.onLastInputTypeChanged(lastInputType));
         this.onLastInputTypeChanged(UserInputService.GetLastInputType());
+
+        Events.messages.createSuccess.connect((message) => this.messagesHandler.createSuccessMessage(message));
+        Events.messages.createError.connect((message) => this.messagesHandler.createErrorMessage(message));
     }
 
     public openInterface(interfaceName: EInterfaces, options?: {fovFactor?: number; blurSize?: number}) {

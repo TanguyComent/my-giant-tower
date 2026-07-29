@@ -1,19 +1,30 @@
 import { Networking } from "@flamework/networking"
+import { ETowerPart } from "../data/tower-parts/ETowerPart"
 
 interface ClientToServerEvents {
-    syncerLoaded: () => void
+    syncerLoaded: () => void;
+    towerPartStand: {
+        drawTowerPart: () => void,
+        buyCurrentTowerPart: () => void,
+    }
 }
 
 interface ServerToClientEvents {
     dispatch: (payload: unknown) => void,
+    towerPartStand: {
+        setStandContent: (towerPartName: ETowerPart | undefined) => void,
+    }
+
+    messages: {
+        createSuccess: (message: string) => void,
+        createError: (message: string) => void,
+    }
 }
 
 interface ClientToServerFunctions {
-
 }
 
 interface ServerToClientFunctions {
-
 }
 
 export const EventsDeclaration = Networking.createEvent<ClientToServerEvents, ServerToClientEvents>()

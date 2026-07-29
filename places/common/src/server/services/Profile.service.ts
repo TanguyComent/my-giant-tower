@@ -12,6 +12,11 @@ import { IUserSession } from "@common/shared/profileStore/model/IUserSession";
 import { PathsUtils } from "@common/shared/utils/Paths.utils";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 
+type FieldUpdate<P extends PathsUtils.Path<IUserSession>> = {
+    path: P;
+    provider: (value: PathsUtils.PathValue<IUserSession, P>) => PathsUtils.PathValue<IUserSession, P>;
+};
+
 @Service()
 export class ProfilesService implements OnStart, OnTick {
     public readonly janitor = new Janitor()
@@ -193,12 +198,9 @@ export class ProfilesService implements OnStart, OnTick {
         return true
     }
 
-    updateFields<P extends PathsUtils.Path<IUserSession>>(
+    updateFields<T extends PathsUtils.Path<IUserSession>[]>(
         playerId: number,
-        fields: Array<{
-            path: P,
-            provider: (value: PathsUtils.PathValue<IUserSession, P>) => PathsUtils.PathValue<IUserSession, P>
-        }>,
+        fields: { [K in keyof T]: FieldUpdate<T[K]> },
         refreshClient = true
     ) {
         const data = this.getPlayerSession(playerId);

@@ -1,7 +1,7 @@
 import { Flamework } from "@flamework/core"
 import { GAME_VERSION } from "@common/shared/GlobalConfig";
 import { Workspace } from "@rbxts/services"
-import { EPlotAttributes, PlotInstance } from "@game/shared/data/components-instances/Plot.instance"
+import { EPlotAttributes, PlotInstance } from "@common/shared/data/components-instances/Plot.instance"
 import { Tags } from "@common/shared/Tags"
 import { GenerateUUID } from "@common/shared/utils/GenerateUUID.utils";
 

@@ -1,3 +1,4 @@
+import { ETowerPart } from "@common/shared/data/tower-parts/ETowerPart";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 
 export interface IUserSession {
@@ -13,6 +14,9 @@ export interface IUserSession {
     boughtGamePasses: Partial<Record<EGamePasses, IBoughtGamePasse>>;
     purchases: IPurchase[];
     settings: ISettings;
+    towerPartStand?: {
+        towerPartName: ETowerPart;
+    }
 }
 
 export interface ISettings {

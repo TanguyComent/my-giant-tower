@@ -1,6 +1,6 @@
 import { Dependency, OnStart, Service } from "@flamework/core"
 import { ProfilesService } from "./Profile.service"
-import { PlotInstance } from "@game/shared/data/components-instances/Plot.instance"
+import { PlotInstance } from "@common/shared/data/components-instances/Plot.instance"
 import { UnassignedPlotComponent } from "../components/plot/UnassignedPlot.component"
 import { Components } from "@flamework/components"
 import { AssignedPlotComponent } from "../components/plot/AssignedPlot.component"

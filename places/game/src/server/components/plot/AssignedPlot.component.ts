@@ -1,10 +1,10 @@
 import { Tags } from "@common/shared/Tags"
 import { BaseComponent, Component } from "@flamework/components"
 import { OnStart } from "@flamework/core"
-import { AssignedPlotAttributes, EPlotAttributes, PlotInstance } from "@game/shared/data/components-instances/Plot.instance"
+import { AssignedPlotAttributes, EPlotAttributes, PlotInstance } from "@common/shared/data/components-instances/Plot.instance"
 import { ProfilesService } from "../../services/Profile.service"
 import { Players } from "@rbxts/services"
-import { ETowerPartStandAttributes } from "@game/shared/data/components-instances/TowerPartStand.instance"
+import { ETowerPartStandAttributes } from "@common/shared/data/components-instances/TowerPartStand.instance"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG

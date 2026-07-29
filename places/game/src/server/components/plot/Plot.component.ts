@@ -1,8 +1,8 @@
 import { Tags } from "@common/shared/Tags";
 import { BaseComponent, Component } from "@flamework/components";
 import { OnStart } from "@flamework/core";
-import { EPlotAttributes, PlotAttributes, PlotInstance } from "@game/shared/data/components-instances/Plot.instance";
-import { ETowerPartStandAttributes } from "@game/shared/data/components-instances/TowerPartStand.instance";
+import { EPlotAttributes, PlotAttributes, PlotInstance } from "@common/shared/data/components-instances/Plot.instance";
+import { ETowerPartStandAttributes } from "@common/shared/data/components-instances/TowerPartStand.instance";
 
 @Component({
     tag: Tags.PLOT_TAG,
