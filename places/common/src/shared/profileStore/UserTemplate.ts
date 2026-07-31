@@ -20,5 +20,8 @@ export const UserTemplate: LastRemoteDataType = {
         musicVolume: 1,
         sfxVolume: 1,
         autoReconnectEnabled: true,
+    },
+    workships: {
+        
     }
 }

@@ -1,7 +1,7 @@
 import { Controller, OnStart } from "@flamework/core";
 import { Players, StarterGui, UserInputService } from "@rbxts/services";
 import { BackpackAtom, IBackpackItem } from "../states/Backpack.atom";
-import { effect, peek, subscribe } from "@rbxts/charm";
+import { computed, effect, peek, subscribe } from "@rbxts/charm";
 import { Icon } from "@rbxts/topbar-plus";
 import { CommonEvents } from "../Networking"
 import { EController } from "@common/shared/data/player/EController"
@@ -10,6 +10,7 @@ import { BACKPACK_ICON_CLOSED, BACKPACK_ICON_OPENED } from "@common/shared/Asset
 import { GenerateUUID } from "@common/shared/utils/GenerateUUID.utils"
 import Signal from "@rbxts/signal"
 import { BackpackUI } from "../interfaces/backpack"
+import { Tags } from "@common/shared/Tags";
 
 const player = Players.LocalPlayer;
 
@@ -133,6 +134,8 @@ export class BackpackController implements OnStart {
     }
 
     private onToolAddedInBackpack(tool: Tool) {
+        if (tool.HasTag(Tags.TOWER_PART_TOOL_TAG)) return
+
         const hotbarItems = peek(BackpackAtom().hotBarItems);
         const toolAlreadyExistsInBackpack = hotbarItems.find((item) => item !== "empty" && item.tool === tool) || peek(BackpackAtom().items).find((item) => item.tool === tool);
         if (toolAlreadyExistsInBackpack) return;

@@ -6,6 +6,7 @@ interface ClientToServerEvents {
     towerPartStand: {
         drawTowerPart: () => void,
         buyCurrentTowerPart: () => void,
+        deleteInHandTowerPart: () => void,
     }
 }
 
@@ -14,7 +15,6 @@ interface ServerToClientEvents {
     towerPartStand: {
         setStandContent: (towerPartName: ETowerPart | undefined) => void,
     }
-
     messages: {
         createSuccess: (message: string) => void,
         createError: (message: string) => void,

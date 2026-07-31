@@ -1,10 +1,10 @@
 export namespace ToolsUtils {
-    export function createToolFromModel(model: Model, iconURL: string): Tool {
-        const usedModel = model.Clone();
-        
+    /**
+    * The model will be consumed, clone it beforehand if needed
+    */
+    export function createToolFromModel(usedModel: Model): Tool {
         const tool = new Instance("Tool");
         tool.CanBeDropped = false;
-        tool.TextureId = iconURL;
 
         const handle = new Instance("Part");
         handle.Name = "Handle";
@@ -14,6 +14,8 @@ export namespace ToolsUtils {
         handle.Anchored = false;
         handle.CFrame = usedModel.GetPivot();
         handle.Parent = tool;
+
+        usedModel.ScaleTo(0.5);
 
         usedModel.GetChildren().forEach((child) => {
             child.Parent = tool;
@@ -37,4 +39,5 @@ export namespace ToolsUtils {
 
         return tool;
     }
+
 }

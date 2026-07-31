@@ -11,6 +11,7 @@ import Object, { deepCopy } from "@rbxts/object-utils";
 import { IUserSession } from "@common/shared/profileStore/model/IUserSession";
 import { PathsUtils } from "@common/shared/utils/Paths.utils";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
+import { EWorkships, EWorkshipsStands, EWorkshipStandState } from "@common/shared/data/workshops/EWorkships";
 
 type FieldUpdate<P extends PathsUtils.Path<IUserSession>> = {
     path: P;
@@ -60,7 +61,18 @@ export class ProfilesService implements OnStart, OnTick {
             dates: {
                 ...remoteData.dates,
                 sessionStartDate: now,
-            }
+            },
+            inHandTowerPart: remoteData.inHandTowerPart,
+            workships: Object.values(EWorkships).reduce((acc, workshipName) => {
+                acc[workshipName] = Object.values(EWorkshipsStands).reduce((acc2, workshipStandName) => {
+                    const remoteWorkshipStand = remoteData.workships[workshipName]?.[workshipStandName];
+                    acc2[workshipStandName] = remoteWorkshipStand ?? {
+                        state: EWorkshipStandState.LOCKED,
+                    }
+                    return acc2;
+                }, {} as IUserSession["workships"][typeof workshipName])
+                return acc;
+            }, {} as IUserSession["workships"])
         }
     }
 
@@ -85,6 +97,22 @@ export class ProfilesService implements OnStart, OnTick {
                 sessionStartDate: now,
                 lastDeconnectionDate: now,
             },
+            inHandTowerPart: session.inHandTowerPart,
+            workships: Object.entries(session.workships).reduce((acc, [workshipName, workshipStands]) => {
+                let shouldSaveWorkship = false;
+                acc[workshipName] = Object.entries(workshipStands).reduce((acc2, [workshipStandName, workshipStand]) => {
+                    let shouldSaveWorkshipStand = workshipStand.state !== EWorkshipStandState.LOCKED;
+                    if (shouldSaveWorkshipStand) {
+                        acc2[workshipStandName] = workshipStand;
+                    }
+                    shouldSaveWorkship = shouldSaveWorkship || shouldSaveWorkshipStand;
+                    return acc2;
+                }, {} as NonNullable<LastRemoteDataType["workships"][typeof workshipName]>)
+                if (!shouldSaveWorkship) {
+                    delete acc[workshipName];
+                }
+                return acc;
+            }, {} as LastRemoteDataType["workships"])
         }
     }
 
