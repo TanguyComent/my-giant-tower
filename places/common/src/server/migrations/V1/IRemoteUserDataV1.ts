@@ -15,7 +15,7 @@ export interface IRemoteUserDataV1 {
     purchases: IPurchaseV1[];
     settings: ISettingsV1;
     inHandTowerPart?: IInHandTowerPartV1;
-    workships: Partial<Record<EWorkships, Partial<Record<EWorkshipsStands, TWorkshipStand>>>>
+    workshops: Partial<Record<EWorkships, Partial<Record<EWorkshipsStands, TWorkshipStand>>>>
 }
 
 export type TWorkshipStandV1 = ILockedWorkshipStandV1 | IUnlockedWorkshipStandV1;

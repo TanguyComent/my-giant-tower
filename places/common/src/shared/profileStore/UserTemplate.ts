@@ -21,7 +21,7 @@ export const UserTemplate: LastRemoteDataType = {
         sfxVolume: 1,
         autoReconnectEnabled: true,
     },
-    workships: {
-        
+    workshops: {
+
     }
 }

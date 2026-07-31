@@ -65,7 +65,7 @@ export class ProfilesService implements OnStart, OnTick {
             inHandTowerPart: remoteData.inHandTowerPart,
             workships: Object.values(EWorkships).reduce((acc, workshipName) => {
                 acc[workshipName] = Object.values(EWorkshipsStands).reduce((acc2, workshipStandName) => {
-                    const remoteWorkshipStand = remoteData.workships[workshipName]?.[workshipStandName];
+                    const remoteWorkshipStand = remoteData.workshops[workshipName]?.[workshipStandName];
                     acc2[workshipStandName] = remoteWorkshipStand ?? {
                         state: EWorkshipStandState.LOCKED,
                     }
@@ -98,7 +98,7 @@ export class ProfilesService implements OnStart, OnTick {
                 lastDeconnectionDate: now,
             },
             inHandTowerPart: session.inHandTowerPart,
-            workships: Object.entries(session.workships).reduce((acc, [workshipName, workshipStands]) => {
+            workshops: Object.entries(session.workships).reduce((acc, [workshipName, workshipStands]) => {
                 let shouldSaveWorkship = false;
                 acc[workshipName] = Object.entries(workshipStands).reduce((acc2, [workshipStandName, workshipStand]) => {
                     let shouldSaveWorkshipStand = workshipStand.state !== EWorkshipStandState.LOCKED;
@@ -107,12 +107,12 @@ export class ProfilesService implements OnStart, OnTick {
                     }
                     shouldSaveWorkship = shouldSaveWorkship || shouldSaveWorkshipStand;
                     return acc2;
-                }, {} as NonNullable<LastRemoteDataType["workships"][typeof workshipName]>)
+                }, {} as NonNullable<LastRemoteDataType["workshops"][typeof workshipName]>)
                 if (!shouldSaveWorkship) {
                     delete acc[workshipName];
                 }
                 return acc;
-            }, {} as LastRemoteDataType["workships"])
+            }, {} as LastRemoteDataType["workshops"])
         }
     }
 
