@@ -1,4 +1,4 @@
-import { RunService } from "@rbxts/services"
+import { ReplicatedStorage, RunService } from "@rbxts/services"
 
 export const RELEASE_PLACE_ID = -1 /// Replace with your actual release place ID
 export const DEVELOP_PLACE_ID = -1 /// Replace with your actual develop place ID
@@ -10,3 +10,4 @@ export const IS_RELEASE = !IS_STUDIO && (game.PlaceId === RELEASE_PLACE_ID)
 export const IS_DEVELOP = IS_STUDIO || (game.PlaceId === DEVELOP_PLACE_ID)
 
 export const BACKPACK_CAPACITY = 300;
+export const PKG_GameData = ReplicatedStorage.WaitForChild("PKG_GameData") as Folder;

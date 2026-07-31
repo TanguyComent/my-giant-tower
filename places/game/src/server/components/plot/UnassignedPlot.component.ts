@@ -1,6 +1,6 @@
 import { Tags } from "@common/shared/Tags"
 import { BaseComponent, Component } from "@flamework/components"
-import { EPlotAttributes, PlotInstance, UnassignedPlotAttributes } from "@game/shared/data/components-instances/Plot.instance"
+import { EPlotAttributes, PlotInstance, UnassignedPlotAttributes } from "@common/shared/data/components-instances/Plot.instance"
 
 @Component({
     tag: Tags.UNASSIGNED_PLOT_TAG,

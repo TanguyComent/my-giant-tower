@@ -3,6 +3,7 @@ export namespace WeightUtils {
 		luck?: number;
 		isBetter?: (a: T, b: T) => boolean;
 		seed?: number;
+		totalWeight?: number; /// Use this to do multiple draws with one total weight calculation, instead of calculating it for each draw.
 	}
 
 	export function getTotalWeight<T extends { weight: number }>(elements: T[]): number {
@@ -13,22 +14,24 @@ export namespace WeightUtils {
 		return totalWeight;
 	}
 
+
 	export function getRandomDraw<T extends { weight: number }>(
 		elements: T[],
 		options?: WeightOptions<T>
 	): T {
+		const filteredElements = elements.filter(element => element.weight > 0);
 		const luck = options?.luck ?? 1;
-		const isBetter = options?.isBetter ?? ((a, b) => a.weight > b.weight);
+		const isBetter = options?.isBetter ?? ((a, b) => a.weight < b.weight);
 		const random = options?.seed ? new Random(options.seed) : new Random();
 
-		const totalWeight = getTotalWeight(elements);
+		const totalWeight = options?.totalWeight ?? getTotalWeight(filteredElements);
 		const totalDraws = math.floor(luck) + (random.NextNumber() < (luck - math.floor(luck)) ? 1 : 0);
 
 		let bestDraw: T | undefined = undefined;
 		for (let i = 0; i < totalDraws; i++) {
 			let randomWeight = random.NextNumber() * totalWeight;
 
-			for (const element of elements) {
+			for (const element of filteredElements) {
 				if (randomWeight <= element.weight) {
 					if (!bestDraw || isBetter(element, bestDraw)) {
 						bestDraw = element;

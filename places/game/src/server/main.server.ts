@@ -1,8 +1,9 @@
 import { Flamework } from "@flamework/core"
 import { GAME_VERSION } from "@common/shared/GlobalConfig";
 import { Workspace } from "@rbxts/services"
-import { PlotInstance } from "@game/shared/data/components-instances/Plot.instance"
+import { EPlotAttributes, PlotInstance } from "@common/shared/data/components-instances/Plot.instance"
 import { Tags } from "@common/shared/Tags"
+import { GenerateUUID } from "@common/shared/utils/GenerateUUID.utils";
 
 print(`Server stating in version ${GAME_VERSION}`)
 
@@ -15,6 +16,8 @@ for (const plot of plotsFolder.GetChildren()) {
 
     const typedPlot = plot as PlotInstance /// Safe because of the type guard above
     typedPlot.ModelStreamingMode = Enum.ModelStreamingMode.PersistentPerPlayer
+    typedPlot.SetAttribute(EPlotAttributes.PLOT_ID, GenerateUUID.generateHexSegment())
+    typedPlot.AddTag(Tags.PLOT_TAG);
     typedPlot.AddTag(Tags.UNASSIGNED_PLOT_TAG);
 }
 

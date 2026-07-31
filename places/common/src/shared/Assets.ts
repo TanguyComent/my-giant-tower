@@ -10,3 +10,5 @@ export const CONFETTO_RECTANGLE = "rbxassetid://119820585507788";
 export const CONFETTO_TRIANGLE = "rbxassetid://138178216587981";
 export const CONFETTO_POLYGON = "rbxassetid://134578426158212";
 export const CONFETTO_STAR = "rbxassetid://126278468947813";
+
+export const CASH_ICON = "rbxassetid://131604113290143";

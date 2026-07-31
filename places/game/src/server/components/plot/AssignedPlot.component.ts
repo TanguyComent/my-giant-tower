@@ -1,9 +1,10 @@
 import { Tags } from "@common/shared/Tags"
 import { BaseComponent, Component } from "@flamework/components"
 import { OnStart } from "@flamework/core"
-import { AssignedPlotAttributes, EPlotAttributes, PlotInstance } from "@game/shared/data/components-instances/Plot.instance"
-import { ProfilesService } from "../services/Profile.service"
+import { AssignedPlotAttributes, EPlotAttributes, PlotInstance } from "@common/shared/data/components-instances/Plot.instance"
+import { ProfilesService } from "../../services/Profile.service"
 import { Players } from "@rbxts/services"
+import { ETowerPartStandAttributes } from "@common/shared/data/components-instances/TowerPartStand.instance"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
@@ -25,16 +26,28 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
             throw "[AssignedPlotComponent.onStart] - Plot assigned before data initialisation.";
         }
 
+        /// Tower part stand initialisation
+        this.instance.Stand.SetAttribute(ETowerPartStandAttributes.OWNER_ID, this.attributes[EPlotAttributes.OWNER_ID]);
+        this.instance.Stand.AddTag(Tags.ASSIGNED_TOWER_PART_STAND_TAG)
+        this.instance.Stand.AddTag(Tags.PLAYER_ASSIGNED_TOWER_PART_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
+
         /// Plot initialisation work here
     }
 
     public unassign() {
         print(`[AssignedPlotComponent.unassign] - Plot ${this.instance.Name} unassigned from player ${this.attributes[EPlotAttributes.OWNER_ID]}`);
         
+        /// Plot cleanup
         this.instance.RemoveTag(Tags.ASSIGNED_PLOT_TAG);
         this.instance.RemoveTag(Tags.PLAYER_ASSIGNED_PLOT_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
         this.instance.SetAttribute(EPlotAttributes.OWNER_ID, undefined);
         this.instance.AddTag(Tags.UNASSIGNED_PLOT_TAG);
+
+        /// Tower part stand cleanup
+        this.instance.Stand.RemoveTag(Tags.ASSIGNED_TOWER_PART_STAND_TAG);
+        this.instance.Stand.RemoveTag(Tags.PLAYER_ASSIGNED_TOWER_PART_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
+        this.instance.Stand.SetAttribute(ETowerPartStandAttributes.OWNER_ID, undefined);
+
         const player = Players.GetPlayerByUserId(this.attributes[EPlotAttributes.OWNER_ID]);
         if (player) {
             this.instance.RemovePersistentPlayer(player);
