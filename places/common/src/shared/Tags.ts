@@ -12,4 +12,9 @@ export namespace Tags {
     export const TOWER_PART_STAND_TAG = "TowerPartStand"
     export const ASSIGNED_TOWER_PART_STAND_TAG = `Assigned_${TOWER_PART_STAND_TAG}`
     export const PLAYER_ASSIGNED_TOWER_PART_STAND_TAG = (playerId: UserId) => `Player_${playerId}_${ASSIGNED_TOWER_PART_STAND_TAG}`
+
+    export const UNLOCKED_WORKSHOP_STAND_TAG = "WorkshopStand";
+    export const UNLOCKABLE_WORKSHOP_STAND_TAG = "UnlockableWorkshopStand";
+    export const PLAYER_UNLOCKED_WORKSHOP_STAND_TAG = (playerId: UserId) => `Player_${playerId}_${UNLOCKED_WORKSHOP_STAND_TAG}`;
+    export const PLAYER_UNLOCKABLE_WORKSHOP_STAND_TAG = (playerId: UserId) => `Player_${playerId}_${UNLOCKABLE_WORKSHOP_STAND_TAG}`;
 }

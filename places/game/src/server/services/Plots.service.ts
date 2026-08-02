@@ -67,7 +67,7 @@ export class PlotsService implements OnStart {
         return availablePlot;
     }
 
-    private async getPlayerPlot(player: Player): Promise<AssignedPlotComponent> {
+    public async getPlayerPlot(player: Player): Promise<AssignedPlotComponent> {
         let elapsedTime = 0
         let playerPlot: AssignedPlotComponent | undefined
 

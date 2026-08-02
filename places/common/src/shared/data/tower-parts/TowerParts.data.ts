@@ -2,7 +2,7 @@ import Object from "@rbxts/object-utils";
 import { ETowerPart } from "./ETowerPart";
 import { TowerPartInstance } from "../components-instances/TowerPart.instance";
 import { PKG_GameData } from "@common/shared/GlobalConfig";
-import { EWorkships } from "../workshops/EWorkships";
+import { EWorkshops } from "../workshops/EWorkshops";
 
 interface IAutomaticTowerPartData {
     model: TowerPartInstance;
@@ -11,7 +11,7 @@ interface IAutomaticTowerPartData {
 interface IManualTowerPartData {
     price: number;
     displayName: string;
-    workshipProcessor: EWorkships;
+    workshipProcessor: EWorkshops;
     timeToProcess: number;
 }
 
@@ -27,31 +27,31 @@ const ManualTowerPartsData: Record<ETowerPart, IManualTowerPartData> = {
     [ETowerPart.TOWER_PART_1]: {
         displayName: "Tower Part 1",
         price: 1000,
-        workshipProcessor: EWorkships.ARCHITECT,
+        workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 10,
     },
     [ETowerPart.TOWER_PART_2]: {
         displayName: "Tower Part 2",
         price: 2000,
-        workshipProcessor: EWorkships.ARCHITECT,
+        workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 20,
     },
     [ETowerPart.TOWER_PART_3]: {
         displayName: "Tower Part 3",
         price: 3000,
-        workshipProcessor: EWorkships.ARCHITECT,
+        workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 30,
     },
     [ETowerPart.TOWER_PART_4]: {
         displayName: "Tower Part 4",
         price: 4000,
-        workshipProcessor: EWorkships.WORKER,
+        workshipProcessor: EWorkshops.WORKER,
         timeToProcess: 40,
     },
     [ETowerPart.TOWER_PART_5]: {
         displayName: "Tower Part 5",
         price: 5000,
-        workshipProcessor: EWorkships.WORKER,
+        workshipProcessor: EWorkshops.WORKER,
         timeToProcess: 50,
     },
 }

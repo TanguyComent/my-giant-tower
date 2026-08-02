@@ -1,5 +1,6 @@
 import { Networking } from "@flamework/networking"
 import { ETowerPart } from "../data/tower-parts/ETowerPart"
+import { EWorkshops } from "../data/workshops/EWorkshops";
 
 interface ClientToServerEvents {
     syncerLoaded: () => void;
@@ -7,6 +8,9 @@ interface ClientToServerEvents {
         drawTowerPart: () => void,
         buyCurrentTowerPart: () => void,
         deleteInHandTowerPart: () => void,
+    }
+    workshops: {
+        unlockNextWorkshopStand: (workshopName: EWorkshops) => void,
     }
 }
 

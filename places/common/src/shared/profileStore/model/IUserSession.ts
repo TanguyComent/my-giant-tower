@@ -1,5 +1,5 @@
 import { ETowerPart } from "@common/shared/data/tower-parts/ETowerPart";
-import { EWorkshipStandState, EWorkships, EWorkshipsStands } from "@common/shared/data/workshops/EWorkships";
+import { EWorkshopStandState, EWorkshops, EWorkshopsStands } from "@common/shared/data/workshops/EWorkshops";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 
 export interface IUserSession {
@@ -16,17 +16,17 @@ export interface IUserSession {
         towerPartName: ETowerPart;
     }
     inHandTowerPart?: IInHandTowerPart;
-    workships: Record<EWorkships, Record<EWorkshipsStands, TWorkshipStand>>
+    workshops: Record<EWorkshops, Record<EWorkshopsStands, TWorkshipStand>>
 }
 
 export type TWorkshipStand = ILockedWorkshipStand | IUnlockedWorkshipStand;
 
 interface ILockedWorkshipStand {
-    state: EWorkshipStandState.LOCKED;
+    state: EWorkshopStandState.LOCKED;
 }
 
 interface IUnlockedWorkshipStand {
-    state: EWorkshipStandState.UNLOCKED;
+    state: EWorkshopStandState.UNLOCKED;
     processingTowerPart?: {
         towerPartName: ETowerPart;
         processingInitialProgress: number;
