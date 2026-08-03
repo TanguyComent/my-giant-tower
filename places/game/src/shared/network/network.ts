@@ -1,5 +1,6 @@
 import { Networking } from "@flamework/networking"
-import { ETowerPart } from "../data/tower-parts/ETowerPart"
+import { ETowerParts } from "../data/tower-parts/ETowerPart"
+import { EWorkshops, EWorkshopsStands } from "../data/workshops/EWorkshops";
 
 interface ClientToServerEvents {
     syncerLoaded: () => void;
@@ -8,12 +9,16 @@ interface ClientToServerEvents {
         buyCurrentTowerPart: () => void,
         deleteInHandTowerPart: () => void,
     }
+    workshops: {
+        unlockNextWorkshopStand: (workshopName: EWorkshops) => void,
+        depositInHandTowerPart: (workshopName: EWorkshops, workshopStandName: EWorkshopsStands) => void,
+    }
 }
 
 interface ServerToClientEvents {
     dispatch: (payload: unknown) => void,
     towerPartStand: {
-        setStandContent: (towerPartName: ETowerPart | undefined) => void,
+        setStandContent: (towerPartName: ETowerParts | undefined) => void,
     }
     messages: {
         createSuccess: (message: string) => void,

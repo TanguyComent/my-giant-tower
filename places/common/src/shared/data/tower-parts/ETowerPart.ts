@@ -1,4 +1,4 @@
-export enum ETowerPart {
+export enum ETowerParts {
     TOWER_PART_1 = "TOWER_PART_1",
     TOWER_PART_2 = "TOWER_PART_2",
     TOWER_PART_3 = "TOWER_PART_3",

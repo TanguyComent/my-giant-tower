@@ -7,6 +7,7 @@ export interface PlotInstance extends Model {
         Pivot: BasePart;
     }
     Stand: TowerPartStandInstance;
+    Origin: BasePart;
 }
 
 export enum EPlotAttributes {

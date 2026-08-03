@@ -11,7 +11,7 @@ import Object, { deepCopy } from "@rbxts/object-utils";
 import { IUserSession } from "@common/shared/profileStore/model/IUserSession";
 import { PathsUtils } from "@common/shared/utils/Paths.utils";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
-import { EWorkships, EWorkshipsStands, EWorkshipStandState } from "@common/shared/data/workshops/EWorkships";
+import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
 
 type FieldUpdate<P extends PathsUtils.Path<IUserSession>> = {
     path: P;
@@ -27,7 +27,7 @@ export class ProfilesService implements OnStart, OnTick {
     public readonly onLastSave = new Signal<(player: Player, reason: "Manual" | "External" | "Shutdown") => void>();
 
     public readonly onProfileLoaded = new Signal<(player: Player) => void>();
-    public readonly onProfileUpdated = new Signal<(player: Player, newProfile: IUserSession) => void>();
+    public readonly beforeProfileSaveProviders = new Array<(player: Player, profile: IUserSession) => IUserSession>();
 
     onStart() {
         for (const player of Players.GetPlayers()) {
@@ -46,10 +46,11 @@ export class ProfilesService implements OnStart, OnTick {
 
     onTick(dt: number): void {}
 
-    private transformRemoteDataToSession(remoteData: LastRemoteDataType): IUserSession {
+    private transformRemoteDataToSession(player: Player, remoteData: LastRemoteDataType): IUserSession {
         const now = DateTime.now().UnixTimestamp;
 
-        return {
+        const offlineTime = now - (remoteData.dates.lastDeconnectionDate ?? now);
+        const session: IUserSession = {
             currency: remoteData.currency,
             UtcLastConnection: remoteData.UtcLastConnection,
             UtcOffset: remoteData.UtcOffset,
@@ -63,20 +64,23 @@ export class ProfilesService implements OnStart, OnTick {
                 sessionStartDate: now,
             },
             inHandTowerPart: remoteData.inHandTowerPart,
-            workships: Object.values(EWorkships).reduce((acc, workshipName) => {
-                acc[workshipName] = Object.values(EWorkshipsStands).reduce((acc2, workshipStandName) => {
+            workshops: Object.values(EWorkshops).reduce((acc, workshipName) => {
+                acc[workshipName] = Object.values(EWorkshopsStands).reduce((acc2, workshipStandName) => {
                     const remoteWorkshipStand = remoteData.workshops[workshipName]?.[workshipStandName];
                     acc2[workshipStandName] = remoteWorkshipStand ?? {
-                        state: EWorkshipStandState.LOCKED,
+                        state: EWorkshopStandState.LOCKED,
                     }
                     return acc2;
-                }, {} as IUserSession["workships"][typeof workshipName])
+                }, {} as IUserSession["workshops"][typeof workshipName])
                 return acc;
-            }, {} as IUserSession["workships"])
+            }, {} as IUserSession["workshops"])
         }
+
+        return session;
     }
 
-    private transformSessionToRemoteData(session: IUserSession): LastRemoteDataType {
+    private transformSessionToRemoteData(player: Player, session: IUserSession): LastRemoteDataType {
+        this.beforeProfileSaveProviders.forEach((provider) => session = provider(player, session))
         const now = DateTime.now().UnixTimestamp;
 
         return {
@@ -98,10 +102,10 @@ export class ProfilesService implements OnStart, OnTick {
                 lastDeconnectionDate: now,
             },
             inHandTowerPart: session.inHandTowerPart,
-            workshops: Object.entries(session.workships).reduce((acc, [workshipName, workshipStands]) => {
+            workshops: Object.entries(session.workshops).reduce((acc, [workshipName, workshipStands]) => {
                 let shouldSaveWorkship = false;
                 acc[workshipName] = Object.entries(workshipStands).reduce((acc2, [workshipStandName, workshipStand]) => {
-                    let shouldSaveWorkshipStand = workshipStand.state !== EWorkshipStandState.LOCKED;
+                    let shouldSaveWorkshipStand = workshipStand.state !== EWorkshopStandState.LOCKED;
                     if (shouldSaveWorkshipStand) {
                         acc2[workshipStandName] = workshipStand;
                     }
@@ -145,7 +149,7 @@ export class ProfilesService implements OnStart, OnTick {
             profile.EndSession()
         }
         
-        this.setPlayerSession(player.User.Id, this.transformRemoteDataToSession(profile.Data))
+        this.setPlayerSession(player.User.Id, this.transformRemoteDataToSession(player, profile.Data))
         
         const playerSession = this.getPlayerSession(player.User.Id)
         if (!playerSession) {
@@ -177,7 +181,7 @@ export class ProfilesService implements OnStart, OnTick {
         const session = this.getPlayerSession(player.User.Id)
         if (!session) return;
 
-        profile.Data = this.transformSessionToRemoteData(session);
+        profile.Data = this.transformSessionToRemoteData(player, session);
     }
 
     private onSessionEnd(player: Player) {

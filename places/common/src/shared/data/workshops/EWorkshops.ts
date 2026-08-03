@@ -1,9 +1,9 @@
-export enum EWorkships {
+export enum EWorkshops {
     ARCHITECT = "ARCHITECT",
     WORKER = "WORKER",
 }
 
-export enum EWorkshipsStands {
+export enum EWorkshopsStands {
     ARCHITECT_1 = "ARCHITECT_1",
     ARCHITECT_2 = "ARCHITECT_2",
     ARCHITECT_3 = "ARCHITECT_3",
@@ -17,7 +17,7 @@ export enum EWorkshipsStands {
     WORKER_5 = "WORKER_5",
 }
 
-export enum EWorkshipStandState {
+export enum EWorkshopStandState {
     LOCKED = "LOCKED",
     UNLOCKED = "UNLOCKED",
 }

@@ -28,4 +28,9 @@ export class PlayerService implements OnStart {
             }
         })
     }
+
+    public hasEnoughCurrency(userId: number, amount: number) {
+        const currency = this.profileService.getField(userId, ["currency"]);
+        return currency !== undefined ? currency >= amount : false;
+    }
 }
