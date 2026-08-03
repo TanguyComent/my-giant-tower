@@ -1,4 +1,4 @@
-import { ETowerPart } from "@common/shared/data/tower-parts/ETowerPart";
+import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { EWorkshopStandState, EWorkshops, EWorkshopsStands } from "@common/shared/data/workshops/EWorkshops";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 
@@ -13,28 +13,28 @@ export interface IUserSession {
     purchases: IPurchase[];
     settings: ISettings;
     towerPartStand?: {
-        towerPartName: ETowerPart;
+        towerPartName: ETowerParts;
     }
     inHandTowerPart?: IInHandTowerPart;
-    workshops: Record<EWorkshops, Record<EWorkshopsStands, TWorkshipStand>>
+    workshops: Record<EWorkshops, Record<EWorkshopsStands, TWorkshopStand>>
 }
 
-export type TWorkshipStand = ILockedWorkshipStand | IUnlockedWorkshipStand;
+export type TWorkshopStand = ILockedWorkshopStand | IUnlockedWorkshopStand;
 
-interface ILockedWorkshipStand {
+export interface ILockedWorkshopStand {
     state: EWorkshopStandState.LOCKED;
 }
 
-interface IUnlockedWorkshipStand {
+export interface IUnlockedWorkshopStand {
     state: EWorkshopStandState.UNLOCKED;
     processingTowerPart?: {
-        towerPartName: ETowerPart;
+        towerPartName: ETowerParts;
         processingInitialProgress: number;
     }
 }
 
 export interface IInHandTowerPart {
-    towerPartName: ETowerPart;
+    towerPartName: ETowerParts;
 }
 
 export interface IDates {

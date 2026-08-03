@@ -1,5 +1,5 @@
 import { DestroyableComponent } from "@common/shared/components/BaseComponents";
-import { EWorkshopStandAttributes, iUnlockableWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance";
+import { EWorkshopStandAttributes, IUnlockableWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance";
 import { Tags } from "@common/shared/Tags";
 import { Component } from "@flamework/components";
 import { OnStart } from "@flamework/core";
@@ -12,7 +12,7 @@ import { Events } from "../Networking";
 @Component({
     tag: Tags.PLAYER_UNLOCKABLE_WORKSHOP_STAND_TAG(Players.LocalPlayer.User.Id)
 })
-export class PlayerUnlockableWorkshopStandComponent extends DestroyableComponent<iUnlockableWorkshopStandAttributes, IWorkshopStandInstance> implements OnStart {
+export class PlayerUnlockableWorkshopStandComponent extends DestroyableComponent<IUnlockableWorkshopStandAttributes, IWorkshopStandInstance> implements OnStart {
 
     onStart(): void {
         this.createUnlockStandProximityPrompt();

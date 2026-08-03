@@ -12,6 +12,7 @@ import Object from "@rbxts/object-utils"
 import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
 import { WorkshopsData } from "@common/shared/data/workshops/Workshops.data"
 import { EWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance"
+import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
@@ -45,8 +46,16 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         /// Plot initialisation work here
         Object.entries(playerData.workshops).forEach(([workshopName, workshopStands]) => {
             const unlockedStands = Object.entries(workshopStands).filter(([_, workshopStand]) => workshopStand.state !== EWorkshopStandState.LOCKED);
-            unlockedStands.forEach(([workshopStandName]) => {
-                this.createWorkshopStandModel(workshopName, workshopStandName);
+            unlockedStands.forEach(([workshopStandName, workshopStand]) => {
+                if (workshopStand.state !== EWorkshopStandState.UNLOCKED) return;
+                this.createWorkshopStandModel(
+                    workshopName, 
+                    workshopStandName,
+                    workshopStand.processingTowerPart ? {
+                        name: workshopStand.processingTowerPart.towerPartName,
+                        initialProgress: workshopStand.processingTowerPart.processingInitialProgress
+                    } : undefined
+                );
             })
         })
 
@@ -77,18 +86,24 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         this.instance.AddTag(Tags.UNASSIGNED_PLOT_TAG);
     }
 
-    public createWorkshopStandModel(workshopName: EWorkshops, workshopStandName: EWorkshopsStands) {
-        const workshopStandModel = WorkshopsUtils.getWorkshopModel(workshopName);
+    public createWorkshopStandModel(workshopName: EWorkshops, workshopStandName: EWorkshopsStands, processingTowerPart?: { name: ETowerParts, initialProgress: number }) {
+        const workshopStandModel = WorkshopsUtils.getWorkshopStandModelComponent(workshopName, {
+            workshopStandName: workshopStandName,
+            ownerId: this.attributes[EPlotAttributes.OWNER_ID],
+            processedTowerPart: processingTowerPart
+        });
         const standDatum = WorkshopStandsData[workshopStandName];
 
         const standPivot = this.instance.Origin.CFrame.ToWorldSpace(standDatum.plotRelativeCFrame);
         workshopStandModel.PivotTo(standPivot);
-
         workshopStandModel.Parent = this.workshopFolders;
-        workshopStandModel.SetAttribute(EWorkshopStandAttributes.WORKSHOP_NAME, workshopName);
-        workshopStandModel.SetAttribute(EWorkshopStandAttributes.WORKSHOP_STAND_NAME, workshopStandName);
+
         workshopStandModel.AddTag(Tags.UNLOCKED_WORKSHOP_STAND_TAG);
         workshopStandModel.AddTag(Tags.PLAYER_UNLOCKED_WORKSHOP_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
+        if (processingTowerPart) {
+            workshopStandModel.AddTag(Tags.PROCESSING_WORKSHOP_STAND_TAG);
+            workshopStandModel.AddTag(Tags.PLAYER_PROCESSING_WORKSHOP_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
+        }
     }
 
     public tryCreateWorkshopTranslucentModel(workshopName: EWorkshops, playerSessionRef?: IUserSession) {
@@ -110,7 +125,10 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
     }
 
     private createTranslucentWorkshopStandModel(workshopName: EWorkshops, workshopStandName: EWorkshopsStands) {
-        const workshopStandModel = WorkshopsUtils.getWorkshopModel(workshopName);
+        const workshopStandModel = WorkshopsUtils.getWorkshopStandModelComponent(workshopName, {
+            workshopStandName: workshopStandName,
+            ownerId: this.attributes[EPlotAttributes.OWNER_ID]
+        });
         const standDatum = WorkshopStandsData[workshopStandName];
 
         workshopStandModel.GetDescendants().forEach((descendant) => {
@@ -124,8 +142,6 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         const standPivot = this.instance.Origin.CFrame.ToWorldSpace(standDatum.plotRelativeCFrame);
         workshopStandModel.PivotTo(standPivot);
         workshopStandModel.Parent = this.workshopFolders;
-        workshopStandModel.SetAttribute(EWorkshopStandAttributes.WORKSHOP_NAME, workshopName);
-        workshopStandModel.SetAttribute(EWorkshopStandAttributes.WORKSHOP_STAND_NAME, workshopStandName);
         workshopStandModel.AddTag(Tags.UNLOCKABLE_WORKSHOP_STAND_TAG);
         workshopStandModel.AddTag(Tags.PLAYER_UNLOCKABLE_WORKSHOP_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
     }

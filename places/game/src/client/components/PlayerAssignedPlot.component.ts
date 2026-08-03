@@ -5,7 +5,7 @@ import { AssignedPlotAttributes, PlotInstance } from "@common/shared/data/compon
 import { Players, TweenService } from "@rbxts/services";
 import { Events } from "../Networking";
 import { PlayerTowerPartStandComponent } from "./PlayerTowerPartStand.component";
-import { ETowerPart } from "@common/shared/data/tower-parts/ETowerPart";
+import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { DestroyableComponent } from "@common/shared/components/BaseComponents";
 import { ClassicProximityPrompt } from "../interfaces/proximity-prompts/classic-proximity-prompt";
 
@@ -21,7 +21,7 @@ export class PlayerAssignedPlotComponent extends DestroyableComponent<AssignedPl
         this.janitor.Add(c1, "Disconnect");
     }
 
-    private onTowerPartDrawn(towerPartName: ETowerPart | undefined) {
+    private onTowerPartDrawn(towerPartName: ETowerParts | undefined) {
         const towerPartStandComponent = Dependency<Components>().getComponent<PlayerTowerPartStandComponent>(this.instance.Stand);
         if (!towerPartStandComponent) {
             warn("[PlayerAssignedPlotComponent.onTowerPartDrawn] - PlayerTowerPartStandComponent not found on Stand instance");

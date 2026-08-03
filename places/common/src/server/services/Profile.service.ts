@@ -27,7 +27,7 @@ export class ProfilesService implements OnStart, OnTick {
     public readonly onLastSave = new Signal<(player: Player, reason: "Manual" | "External" | "Shutdown") => void>();
 
     public readonly onProfileLoaded = new Signal<(player: Player) => void>();
-    public readonly onProfileUpdated = new Signal<(player: Player, newProfile: IUserSession) => void>();
+    public readonly beforeProfileSaveProviders = new Array<(player: Player, profile: IUserSession) => IUserSession>();
 
     onStart() {
         for (const player of Players.GetPlayers()) {
@@ -46,10 +46,11 @@ export class ProfilesService implements OnStart, OnTick {
 
     onTick(dt: number): void {}
 
-    private transformRemoteDataToSession(remoteData: LastRemoteDataType): IUserSession {
+    private transformRemoteDataToSession(player: Player, remoteData: LastRemoteDataType): IUserSession {
         const now = DateTime.now().UnixTimestamp;
 
-        return {
+        const offlineTime = now - (remoteData.dates.lastDeconnectionDate ?? now);
+        const session: IUserSession = {
             currency: remoteData.currency,
             UtcLastConnection: remoteData.UtcLastConnection,
             UtcOffset: remoteData.UtcOffset,
@@ -74,9 +75,12 @@ export class ProfilesService implements OnStart, OnTick {
                 return acc;
             }, {} as IUserSession["workshops"])
         }
+
+        return session;
     }
 
-    private transformSessionToRemoteData(session: IUserSession): LastRemoteDataType {
+    private transformSessionToRemoteData(player: Player, session: IUserSession): LastRemoteDataType {
+        this.beforeProfileSaveProviders.forEach((provider) => session = provider(player, session))
         const now = DateTime.now().UnixTimestamp;
 
         return {
@@ -145,7 +149,7 @@ export class ProfilesService implements OnStart, OnTick {
             profile.EndSession()
         }
         
-        this.setPlayerSession(player.User.Id, this.transformRemoteDataToSession(profile.Data))
+        this.setPlayerSession(player.User.Id, this.transformRemoteDataToSession(player, profile.Data))
         
         const playerSession = this.getPlayerSession(player.User.Id)
         if (!playerSession) {
@@ -177,7 +181,7 @@ export class ProfilesService implements OnStart, OnTick {
         const session = this.getPlayerSession(player.User.Id)
         if (!session) return;
 
-        profile.Data = this.transformSessionToRemoteData(session);
+        profile.Data = this.transformSessionToRemoteData(player, session);
     }
 
     private onSessionEnd(player: Player) {

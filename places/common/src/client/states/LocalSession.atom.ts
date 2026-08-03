@@ -1,6 +1,6 @@
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops"
 import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
-import { Atom, atom } from "@rbxts/charm"
+import { Atom, atom, computed } from "@rbxts/charm"
 import Object from "@rbxts/object-utils"
 
 const defaultProfile: IUserSession = {
@@ -35,3 +35,4 @@ const defaultProfile: IUserSession = {
 }
 
 export const LocalSessionAtom: Atom<IUserSession> = atom(defaultProfile)
+export const WorkshopStandSelector = (workshopName: EWorkshops, workshopStandName: EWorkshopsStands) => computed(() => LocalSessionAtom().workshops[workshopName][workshopStandName]);

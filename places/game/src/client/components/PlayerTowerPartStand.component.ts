@@ -1,4 +1,4 @@
-import { ETowerPart } from "@common/shared/data/tower-parts/ETowerPart";
+import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { Tags } from "@common/shared/Tags";
 import { Component } from "@flamework/components";
 import { OnStart } from "@flamework/core";
@@ -49,7 +49,7 @@ export class PlayerTowerPartStandComponent extends DestroyableComponent<Assigned
         }
     }
 
-    public setCurrentTowerPart(towerPartName: ETowerPart) {
+    public setCurrentTowerPart(towerPartName: ETowerParts) {
         this.destroyCurrentTowerPartModel();
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPartName, 0.5);
         towerPartModel.PivotTo(this.instance.ItemPosition.CFrame);
