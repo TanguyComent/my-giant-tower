@@ -9,7 +9,7 @@ import { CommonEvents } from "@common/server/Networking";
 import { ServerBackpackUtils } from "@game/shared/utils/ServerBackpack.utils";
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
 import { Components } from "@flamework/components";
-import { UnlockedWorkshopComponent } from "../components/workshops/UnlocedWorkshop.component";
+import { UnlockedWorkshopComponent } from "../components/workshops/UnlockedWorkshop.component";
 import { EWorkshopStandAttributes } from "@common/shared/data/components-instances/WorkshopStand.instance";
 import Object from "@rbxts/object-utils";
 import { ProcessingWorkshopComponent } from "../components/workshops/ProcessingWorshop.component";

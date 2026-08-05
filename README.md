@@ -1,6 +1,8 @@
 # Description
 
-My Giant Tower roblox game code
+My Giant Tower roblox game code.
+
+My Giant Tower is a tycoon game where the player buy tower parts to build an infinite tower. The player tower generate $ every seconds. With its earned currency, the player can upgrade its tower by buying new tower parts and earning even more money.
 
 # Places
 | Name | Rojo Port |

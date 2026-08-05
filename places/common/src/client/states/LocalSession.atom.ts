@@ -1,3 +1,4 @@
+import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops"
 import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
 import { Atom, atom, computed } from "@rbxts/charm"
@@ -31,7 +32,13 @@ const defaultProfile: IUserSession = {
             return acc2;
         }, {} as IUserSession["workshops"][typeof workshipName])
         return acc;
-    }, {} as IUserSession["workshops"])
+    }, {} as IUserSession["workshops"]),
+    towerParts: Object.values(ETowerParts).reduce((acc, towerPartName) => {
+        acc[towerPartName] = {
+            amount: 0
+        }
+        return acc;
+    }, {} as IUserSession["towerParts"])
 }
 
 export const LocalSessionAtom: Atom<IUserSession> = atom(defaultProfile)
