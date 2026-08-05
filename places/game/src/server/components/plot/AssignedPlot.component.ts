@@ -14,6 +14,7 @@ import { WorkshopsData } from "@common/shared/data/workshops/Workshops.data"
 import { EWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 import { Events } from "../../Networking"
+import { MAX_TOWER_PARTS } from "@common/shared/GlobalConfig"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
@@ -69,6 +70,9 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
     }
 
     public addTowerPart(towerPart: ETowerParts) {
+        if (this.towerParts.size() >= MAX_TOWER_PARTS) {
+            this.towerParts.pop();
+        }
         this.towerParts.push(towerPart);
 
         const player = Players.GetPlayerByUserId(this.attributes[EPlotAttributes.OWNER_ID]);
