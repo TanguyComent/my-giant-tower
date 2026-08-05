@@ -17,6 +17,11 @@ export interface IUserSession {
     }
     inHandTowerPart?: IInHandTowerPart;
     workshops: Record<EWorkshops, Record<EWorkshopsStands, TWorkshopStand>>
+    towerParts: Record<ETowerParts, ITowerPartEntry>;
+}
+
+export interface ITowerPartEntry {
+    amount: number;
 }
 
 export type TWorkshopStand = ILockedWorkshopStand | IUnlockedWorkshopStand;

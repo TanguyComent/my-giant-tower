@@ -12,6 +12,7 @@ import { IUserSession } from "@common/shared/profileStore/model/IUserSession";
 import { PathsUtils } from "@common/shared/utils/Paths.utils";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
+import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 
 type FieldUpdate<P extends PathsUtils.Path<IUserSession>> = {
     path: P;
@@ -73,7 +74,13 @@ export class ProfilesService implements OnStart, OnTick {
                     return acc2;
                 }, {} as IUserSession["workshops"][typeof workshipName])
                 return acc;
-            }, {} as IUserSession["workshops"])
+            }, {} as IUserSession["workshops"]),
+            towerParts: Object.values(ETowerParts).reduce((acc, towerPartName) => {
+                acc[towerPartName] = remoteData.towerParts[towerPartName] ?? {
+                    amount: 0
+                }
+                return acc;
+            }, {} as IUserSession["towerParts"])
         }
 
         return session;
@@ -116,7 +123,13 @@ export class ProfilesService implements OnStart, OnTick {
                     delete acc[workshipName];
                 }
                 return acc;
-            }, {} as LastRemoteDataType["workshops"])
+            }, {} as LastRemoteDataType["workshops"]),
+            towerParts: Object.entries(session.towerParts).reduce((acc, [towerPartName, towerPartEntry]) => {
+                if (towerPartEntry.amount > 0) {
+                    acc[towerPartName] = towerPartEntry;
+                }
+                return acc;
+            }, {} as LastRemoteDataType["towerParts"])
         }
     }
 

@@ -14,6 +14,7 @@ out/
 # IDE
 .vscode/
 .idea/
+.claude/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

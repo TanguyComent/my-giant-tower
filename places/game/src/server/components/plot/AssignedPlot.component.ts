@@ -13,6 +13,9 @@ import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
 import { WorkshopsData } from "@common/shared/data/workshops/Workshops.data"
 import { EWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
+import { Events } from "../../Networking"
+import { MAX_TOWER_PARTS } from "@common/shared/GlobalConfig"
+import { TowerPartsUtils } from "@common/shared/utils/TowerParts.utils"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
@@ -20,7 +23,8 @@ import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes, PlotInstance> implements OnStart {
     private workshopFolders = new Instance("Folder");
     private translucentWorkshopsRef: Partial<Record<EWorkshops, IWorkshopStandInstance>> = {}
-    
+    private towerParts: ETowerParts[] = [];
+
     constructor(
         private readonly profilesService: ProfilesService,
     ) {
@@ -44,6 +48,8 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         this.instance.Stand.AddTag(Tags.PLAYER_ASSIGNED_TOWER_PART_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
 
         /// Plot initialisation work here
+        this.towerParts = TowerPartsUtils.getInitialTowerFromSession(playerData.towerParts);
+
         Object.entries(playerData.workshops).forEach(([workshopName, workshopStands]) => {
             const unlockedStands = Object.entries(workshopStands).filter(([_, workshopStand]) => workshopStand.state !== EWorkshopStandState.LOCKED);
             unlockedStands.forEach(([workshopStandName, workshopStand]) => {
@@ -60,6 +66,19 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         })
 
         Object.values(EWorkshops).forEach((workshopName) => this.tryCreateWorkshopTranslucentModel(workshopName, playerData))
+    }
+
+    public getTowerParts(): ETowerParts[] {
+        return this.towerParts;
+    }
+
+    public addTowerPart(towerPart: ETowerParts) {
+        if (this.towerParts.size() >= MAX_TOWER_PARTS) {
+            this.towerParts.pop();
+        }
+        this.towerParts.unshift(towerPart);
+
+        Events.tower.patch.broadcast(this.attributes[EPlotAttributes.OWNER_ID], towerPart);
     }
 
     public unassign() {

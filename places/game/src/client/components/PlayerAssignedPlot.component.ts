@@ -14,7 +14,7 @@ import { ClassicProximityPrompt } from "../interfaces/proximity-prompts/classic-
 })
 export class PlayerAssignedPlotComponent extends DestroyableComponent<AssignedPlotAttributes, PlotInstance> implements OnStart {
     private spinTowerPartsLeverProximityPrompt: ProximityPrompt = ClassicProximityPrompt.Create();
-    
+
     onStart(): void {
         this.setupLeverProximityPrompt(this.instance.Lever);
         const c1 = Events.towerPartStand.setStandContent.connect((towerPartName) => this.onTowerPartDrawn(towerPartName));
