@@ -44,4 +44,22 @@ export namespace AnimationsUtils {
         model.ScaleTo(targetScale);
         return model;
     }
+
+    export async function shakeModelAsync(model: Model, options?: { duration?: number; magnitude?: number; frequency?: number }): Promise<Model> {
+        const duration = options?.duration ?? 0.3;
+        const magnitude = options?.magnitude ?? 0.15;
+        const frequency = options?.frequency ?? 20;
+        const settledCFrame = model.GetPivot();
+
+        let elapsedTime = 0;
+        while (elapsedTime < duration) {
+            elapsedTime += RunService.PreRender.Wait()[0];
+            const decay = 1 - math.clamp(elapsedTime / duration, 0, 1);
+            const offset = math.sin(elapsedTime * frequency) * magnitude * decay;
+            model.PivotTo(settledCFrame.mul(new CFrame(offset, 0, 0)));
+        }
+
+        model.PivotTo(settledCFrame);
+        return model;
+    }
 }

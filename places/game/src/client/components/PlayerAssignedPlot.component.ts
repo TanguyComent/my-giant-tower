@@ -8,17 +8,30 @@ import { PlayerTowerPartStandComponent } from "./PlayerTowerPartStand.component"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { DestroyableComponent } from "@common/shared/components/BaseComponents";
 import { ClassicProximityPrompt } from "../interfaces/proximity-prompts/classic-proximity-prompt";
+import { PlayerTower } from "../class/PlayerTower.class";
 
 @Component({
     tag: Tags.PLAYER_ASSIGNED_PLOT_TAG(Players.LocalPlayer.User.Id)
 })
 export class PlayerAssignedPlotComponent extends DestroyableComponent<AssignedPlotAttributes, PlotInstance> implements OnStart {
     private spinTowerPartsLeverProximityPrompt: ProximityPrompt = ClassicProximityPrompt.Create();
-    
+    private tower!: PlayerTower;
+
     onStart(): void {
+        this.tower = new PlayerTower(this.instance.Origin.CFrame, this.instance);
         this.setupLeverProximityPrompt(this.instance.Lever);
         const c1 = Events.towerPartStand.setStandContent.connect((towerPartName) => this.onTowerPartDrawn(towerPartName));
         this.janitor.Add(c1, "Disconnect");
+
+        const c2 = Events.tower.sync.connect((towerParts) => this.tower.build(towerParts));
+        this.janitor.Add(c2, "Disconnect");
+
+        const c3 = Events.tower.patch.connect((towerPart) => this.tower.enqueueTowerPartWithAnimation(towerPart));
+        this.janitor.Add(c3, "Disconnect");
+
+        this.janitor.Add(() => this.tower.destroy());
+
+        Events.tower.requestSync();
     }
 
     private onTowerPartDrawn(towerPartName: ETowerParts | undefined) {

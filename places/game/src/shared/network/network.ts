@@ -4,6 +4,9 @@ import { EWorkshops, EWorkshopsStands } from "../data/workshops/EWorkshops";
 
 interface ClientToServerEvents {
     syncerLoaded: () => void;
+    tower: {
+        requestSync: () => void,
+    }
     towerPartStand: {
         drawTowerPart: () => void,
         buyCurrentTowerPart: () => void,
@@ -17,6 +20,10 @@ interface ClientToServerEvents {
 
 interface ServerToClientEvents {
     dispatch: (payload: unknown) => void,
+    tower: {
+        sync: (towerParts: ETowerParts[]) => void,
+        patch: (towerPart: ETowerParts) => void,
+    }
     towerPartStand: {
         setStandContent: (towerPartName: ETowerParts | undefined) => void,
     }
