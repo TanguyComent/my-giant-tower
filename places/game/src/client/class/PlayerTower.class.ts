@@ -10,8 +10,10 @@ interface TowerPartEntry {
 }
 
 /**
- * Builds and maintains the visual tower model for a plot, from a flat array of ETowerParts.
- * Tower parts are stacked bottom-to-top in array order, on top of `baseCFrame`.
+ * Builds and maintains the visual tower model for a plot, on top of `baseCFrame`.
+ * `build` lays out a full array bottom-to-top in the given order (index 0 = bottom).
+ * `addTowerPart`/its animated variant always slot the new part in at the very bottom, on the floor,
+ * shifting every existing part up by one slot - so the array (and this model) stays newest-first.
  * Assumes each tower part model's pivot sits at the base of the part, so parts can be stacked purely by summing heights.
  * Capped at MAX_TOWER_PARTS, mirroring the server: once reached, adding a part first removes the current top part.
  */
@@ -33,7 +35,7 @@ export class PlayerTower {
 
     public build(towerParts: ETowerParts[]): void {
         this.clear();
-        towerParts.forEach((towerPart) => this.addTowerPart(towerPart));
+        towerParts.forEach((towerPart) => this.stackOnTop(towerPart));
     }
 
     public addTowerPart(towerPart: ETowerParts): Model {
@@ -41,10 +43,12 @@ export class PlayerTower {
 
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
         const height = towerPartModel.GetExtentsSize().Y;
-        towerPartModel.PivotTo(this.getTopCFrame());
+
+        this.shiftExistingPartsUpBy(height);
+        towerPartModel.PivotTo(this.baseCFrame);
         towerPartModel.Parent = this.model;
 
-        this.towerPartEntries.push({ model: towerPartModel, height });
+        this.towerPartEntries.unshift({ model: towerPartModel, height });
         this.towerHeight += height;
         return towerPartModel;
     }
@@ -62,16 +66,32 @@ export class PlayerTower {
 
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
         const height = towerPartModel.GetExtentsSize().Y;
-        const targetCFrame = this.getTopCFrame();
 
-        towerPartModel.PivotTo(this.baseCFrame);
+        this.shiftExistingPartsUpBy(height);
+        towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height, 0)));
         towerPartModel.Parent = this.model;
 
-        await AnimationsUtils.bringModelInCurveToAsync(towerPartModel, targetCFrame, PlayerTower.upliftDuration);
+        await AnimationsUtils.bringModelInCurveToAsync(towerPartModel, this.baseCFrame, PlayerTower.upliftDuration);
         await AnimationsUtils.shakeModelAsync(towerPartModel);
+
+        this.towerPartEntries.unshift({ model: towerPartModel, height });
+        this.towerHeight += height;
+    }
+
+    private stackOnTop(towerPart: ETowerParts): Model {
+        const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
+        const height = towerPartModel.GetExtentsSize().Y;
+        towerPartModel.PivotTo(this.getTopCFrame());
+        towerPartModel.Parent = this.model;
 
         this.towerPartEntries.push({ model: towerPartModel, height });
         this.towerHeight += height;
+        return towerPartModel;
+    }
+
+    private shiftExistingPartsUpBy(height: number): void {
+        const offset = new Vector3(0, height, 0);
+        this.towerPartEntries.forEach((entry) => entry.model.PivotTo(entry.model.GetPivot().add(offset)));
     }
 
     private removeTopPartIfAtLimit(): void {

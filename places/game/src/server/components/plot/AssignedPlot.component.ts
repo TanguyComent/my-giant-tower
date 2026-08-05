@@ -73,12 +73,9 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         if (this.towerParts.size() >= MAX_TOWER_PARTS) {
             this.towerParts.pop();
         }
-        this.towerParts.push(towerPart);
+        this.towerParts.unshift(towerPart);
 
-        const player = Players.GetPlayerByUserId(this.attributes[EPlotAttributes.OWNER_ID]);
-        if (player) {
-            Events.tower.patch.fire(player, towerPart);
-        }
+        Events.tower.patch.broadcast(this.attributes[EPlotAttributes.OWNER_ID], towerPart);
     }
 
     public unassign() {

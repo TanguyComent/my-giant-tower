@@ -1,11 +1,12 @@
 import { Networking } from "@flamework/networking"
 import { ETowerParts } from "../data/tower-parts/ETowerPart"
 import { EWorkshops, EWorkshopsStands } from "../data/workshops/EWorkshops";
+import { UserId } from "@common/shared/utils/TypeWrapper.utils"
 
 interface ClientToServerEvents {
     syncerLoaded: () => void;
     tower: {
-        requestSync: () => void,
+        requestSync: (ownerId: UserId) => void,
     }
     towerPartStand: {
         drawTowerPart: () => void,
@@ -21,8 +22,8 @@ interface ClientToServerEvents {
 interface ServerToClientEvents {
     dispatch: (payload: unknown) => void,
     tower: {
-        sync: (towerParts: ETowerParts[]) => void,
-        patch: (towerPart: ETowerParts) => void,
+        sync: (ownerId: UserId, towerParts: ETowerParts[]) => void,
+        patch: (ownerId: UserId, towerPart: ETowerParts) => void,
     }
     towerPartStand: {
         setStandContent: (towerPartName: ETowerParts | undefined) => void,
