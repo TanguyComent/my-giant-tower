@@ -44,4 +44,41 @@ export namespace AnimationsUtils {
         model.ScaleTo(targetScale);
         return model;
     }
+
+    /**
+     * Rises `model` straight up from its current position to `targetCFrame`, shaking on the local X/Z
+     * axes throughout (decaying to nothing by the end). Meant for a model growing up out of the ground.
+     * `shouldCancel` is polled every frame; when it returns true the loop stops immediately without
+     * snapping to `targetCFrame`, for callers that need to abandon the animation early (e.g. the model
+     * being destroyed mid-flight).
+     */
+    export async function riseFromGroundAsync(model: Model, targetCFrame: CFrame, duration: number, options?: { easingFunction?: (t: number) => number, shakeMagnitude?: number, shakeFrequency?: number, shouldCancel?: () => boolean }): Promise<Model> {
+        const easingFunction = options?.easingFunction ?? AnimationsUtils.Easing.SmoothStep;
+        const shakeMagnitude = options?.shakeMagnitude ?? 0.15;
+        const shakeFrequency = options?.shakeFrequency ?? 20;
+        const shouldCancel = options?.shouldCancel ?? (() => false);
+        const initialY = model.GetPivot().Y;
+
+        let elapsedTime = 0;
+        while (elapsedTime < duration) {
+            if (shouldCancel()) return model;
+
+            elapsedTime += RunService.PreRender.Wait()[0];
+            const t = math.clamp(elapsedTime / duration, 0, 1);
+            const alpha = easingFunction(t);
+            const decay = 1 - t;
+
+            const currentY = initialY + (targetCFrame.Y - initialY) * alpha;
+            const shakeX = math.sin(elapsedTime * shakeFrequency) * shakeMagnitude * decay;
+            const shakeZ = math.cos(elapsedTime * shakeFrequency * 0.7) * shakeMagnitude * decay;
+
+            const verticalCFrame = new CFrame(new Vector3(targetCFrame.X, currentY, targetCFrame.Z)).mul(targetCFrame.Rotation);
+            model.PivotTo(verticalCFrame.mul(new CFrame(shakeX, 0, shakeZ)));
+        }
+
+        if (!shouldCancel()) {
+            model.PivotTo(targetCFrame);
+        }
+        return model;
+    }
 }
