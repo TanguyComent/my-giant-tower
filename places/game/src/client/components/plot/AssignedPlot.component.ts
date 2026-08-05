@@ -18,7 +18,7 @@ export class AssignedPlotComponent extends DestroyableComponent<AssignedPlotAttr
 
     onStart(): void {
         const ownerId = this.attributes[EPlotAttributes.OWNER_ID];
-        this.tower = new PlayerTower(this.instance.Origin.CFrame, this.instance);
+        this.tower = new PlayerTower(this.instance.TowerOrigin.CFrame, this.instance);
 
         const c1 = Events.tower.sync.connect((syncedOwnerId, towerParts) => {
             if (syncedOwnerId !== ownerId) return;

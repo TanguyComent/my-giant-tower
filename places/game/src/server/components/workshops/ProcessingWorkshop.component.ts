@@ -7,6 +7,8 @@ import { Tags } from "@common/shared/Tags";
 import { Component, Components } from "@flamework/components";
 import { Dependency, OnStart, OnTick } from "@flamework/core";
 import { UnlockedWorkshopComponent } from "./UnlockedWorkshop.component";
+import { PlotsService } from "@game/server/services/Plots.service";
+import { Players } from "@rbxts/services";
 
 @Component({
     tag: Tags.PROCESSING_WORKSHOP_STAND_TAG,
@@ -18,7 +20,8 @@ export class ProcessingWorkshopComponent extends DestroyableComponent<IProcessin
     private onTickEnabled = true;
 
     constructor(
-        private readonly profilesService: ProfilesService
+        private readonly profilesService: ProfilesService,
+        private readonly plotsService: PlotsService,
     ) {
         super()
     }
@@ -62,9 +65,17 @@ export class ProcessingWorkshopComponent extends DestroyableComponent<IProcessin
             }
         ])
         if (success) {
+            const plotOwner = Players.GetPlayerByUserId(this.attributes[EWorkshopStandAttributes.OWNER_ID]);
+            if (!plotOwner) {
+                throw `[ProcessingWorkshopComponent.onProcessed] - Plot owner not found for userId ${this.attributes[EWorkshopStandAttributes.OWNER_ID]}`;
+            }
+
             const unlockedWorkshopComponent = Dependency<Components>().getComponent<UnlockedWorkshopComponent>(this.instance);
             if (unlockedWorkshopComponent) {
                 unlockedWorkshopComponent.clearProcessingTowerPart();
+                this.plotsService.getPlayerPlot(plotOwner).then((plotComponent) => {
+                    plotComponent.addTowerPart(this.attributes[EWorkshopStandAttributes.PROCESSING_TOWER_PART_NAME]);
+                })
             } else {
                 throw `[ProcessingWorkshopComponent.onProcessed] - UnlockedWorkshopComponent not found.`;
             }

@@ -15,6 +15,7 @@ import { EWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 import { Events } from "../../Networking"
 import { MAX_TOWER_PARTS } from "@common/shared/GlobalConfig"
+import { TowerPartsUtils } from "@common/shared/utils/TowerParts.utils"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
@@ -47,6 +48,8 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         this.instance.Stand.AddTag(Tags.PLAYER_ASSIGNED_TOWER_PART_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
 
         /// Plot initialisation work here
+        this.towerParts = TowerPartsUtils.getInitialTowerFromSession(playerData.towerParts);
+
         Object.entries(playerData.workshops).forEach(([workshopName, workshopStands]) => {
             const unlockedStands = Object.entries(workshopStands).filter(([_, workshopStand]) => workshopStand.state !== EWorkshopStandState.LOCKED);
             unlockedStands.forEach(([workshopStandName, workshopStand]) => {

@@ -52,7 +52,7 @@ export class PlayerTower {
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
         const height = towerPartModel.GetExtentsSize().Y;
 
-        towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height, 0)));
+        towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height / 2, 0)));
         towerPartModel.Parent = this.model;
         this.model.PivotTo(this.model.GetPivot().mul(new CFrame(0, height, 0)));
 
@@ -79,11 +79,12 @@ export class PlayerTower {
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
         const height = towerPartModel.GetExtentsSize().Y;
 
-        towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height, 0)));
+        towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height / 2, 0)));
         towerPartModel.Parent = this.model;
 
         const targetPivot = this.model.GetPivot().mul(new CFrame(0, height, 0));
         await AnimationsUtils.riseFromGroundAsync(this.model, targetPivot, PlayerTower.upliftDuration, {
+            shakeMagnitude: 1,
             shouldCancel: () => this.destroyed,
         });
 
@@ -96,7 +97,7 @@ export class PlayerTower {
     private stackOnTop(towerPart: ETowerParts): Model {
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
         const height = towerPartModel.GetExtentsSize().Y;
-        towerPartModel.PivotTo(this.getTopCFrame());
+        towerPartModel.PivotTo(this.getTopCFrame().add(new Vector3(0, height / 2, 0)));
         towerPartModel.Parent = this.model;
 
         this.towerPartEntries.push({ model: towerPartModel, height });
