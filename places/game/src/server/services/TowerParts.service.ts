@@ -12,7 +12,7 @@ import { Components } from "@flamework/components";
 import { UnlockedWorkshopComponent } from "../components/workshops/UnlockedWorkshop.component";
 import { EWorkshopStandAttributes } from "@common/shared/data/components-instances/WorkshopStand.instance";
 import Object from "@rbxts/object-utils";
-import { ProcessingWorkshopComponent } from "../components/workshops/ProcessingWorshop.component";
+import { ProcessingWorkshopComponent } from "../components/workshops/ProcessingWorkshop.component";
 
 @Service()
 export class TowerPartsService implements OnStart {
