@@ -11,4 +11,6 @@ export const IS_DEVELOP = IS_STUDIO || (game.PlaceId === DEVELOP_PLACE_ID)
 
 export const BACKPACK_CAPACITY = 300;
 export const MAX_TOWER_PARTS = 100;
+export const TOWER_CURRENCY_GENERATION_INTERVAL = 0.25;
+export const TOWER_CURRENCY_SYNC_INTERVAL = 1;
 export const PKG_GameData = ReplicatedStorage.WaitForChild("PKG_GameData") as Folder;

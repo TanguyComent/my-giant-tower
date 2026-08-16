@@ -1,6 +1,6 @@
 import { Tags } from "@common/shared/Tags"
 import { BaseComponent, Component } from "@flamework/components"
-import { OnStart } from "@flamework/core"
+import { OnStart, OnTick } from "@flamework/core"
 import { AssignedPlotAttributes, EPlotAttributes, PlotInstance } from "@common/shared/data/components-instances/Plot.instance"
 import { ProfilesService } from "../../services/Profile.service"
 import { Players } from "@rbxts/services"
@@ -14,23 +14,26 @@ import { WorkshopsData } from "@common/shared/data/workshops/Workshops.data"
 import { EWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 import { Events } from "../../Networking"
-import { MAX_TOWER_PARTS } from "@common/shared/GlobalConfig"
+import { MAX_TOWER_PARTS, TOWER_CURRENCY_GENERATION_INTERVAL, TOWER_CURRENCY_SYNC_INTERVAL } from "@common/shared/GlobalConfig"
 import { TowerPartsUtils } from "@common/shared/utils/TowerParts.utils"
+import { ETowerCurrencyButtonAttributes } from "@common/shared/data/components-instances/TowerCurrencyButton.instance"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
 })
-export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes, PlotInstance> implements OnStart {
+export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes, PlotInstance> implements OnStart, OnTick {
     private workshopFolders = new Instance("Folder");
     private translucentWorkshopsRef: Partial<Record<EWorkshops, IWorkshopStandInstance>> = {}
     private towerParts: ETowerParts[] = [];
+    private timeSinceLastCurrencyGeneration = 0;
+    private timeSinceLastCurrencySync = 0;
 
     constructor(
         private readonly profilesService: ProfilesService,
     ) {
         super()
     }
-    
+
     onStart(): void {
         print(`[AssignedPlotComponent.onStart] - Plot ${this.instance.Name} assigned to player ${this.attributes[EPlotAttributes.OWNER_ID]}`);
         this.workshopFolders.Name = "WorkshopFolders";
@@ -46,6 +49,11 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         this.instance.Stand.SetAttribute(ETowerPartStandAttributes.OWNER_ID, this.attributes[EPlotAttributes.OWNER_ID]);
         this.instance.Stand.AddTag(Tags.ASSIGNED_TOWER_PART_STAND_TAG)
         this.instance.Stand.AddTag(Tags.PLAYER_ASSIGNED_TOWER_PART_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
+
+        /// Tower currency button initialisation
+        this.instance.TowerCurrencyButton.SetAttribute(ETowerCurrencyButtonAttributes.OWNER_ID, this.attributes[EPlotAttributes.OWNER_ID]);
+        this.instance.TowerCurrencyButton.AddTag(Tags.TOWER_CURRENCY_BUTTON_TAG)
+        this.instance.TowerCurrencyButton.AddTag(Tags.PLAYER_CURRENCY_BUTTON_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
 
         /// Plot initialisation work here
         this.towerParts = TowerPartsUtils.getInitialTowerFromSession(playerData.towerParts);
@@ -66,6 +74,24 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         })
 
         Object.values(EWorkshops).forEach((workshopName) => this.tryCreateWorkshopTranslucentModel(workshopName, playerData))
+    }
+
+    onTick(dt: number): void {
+        this.timeSinceLastCurrencyGeneration += dt;
+        this.timeSinceLastCurrencySync += dt;
+
+        if (this.timeSinceLastCurrencyGeneration < TOWER_CURRENCY_GENERATION_INTERVAL) return;
+
+        const currencyPerSecond = this.towerParts.reduce((sum, towerPart) => sum + TowerPartsUtils.getTowerPartCurrencyGeneration(towerPart), 0);
+        const generatedCurrency = currencyPerSecond * this.timeSinceLastCurrencyGeneration;
+        this.timeSinceLastCurrencyGeneration = 0;
+
+        const shouldSyncClient = this.timeSinceLastCurrencySync >= TOWER_CURRENCY_SYNC_INTERVAL;
+        if (shouldSyncClient) {
+            this.timeSinceLastCurrencySync = 0;
+        }
+
+        this.profilesService.updateField(this.attributes[EPlotAttributes.OWNER_ID], ["towerCurrency"], (old) => old + generatedCurrency, shouldSyncClient);
     }
 
     public getTowerParts(): ETowerParts[] {
@@ -93,7 +119,12 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         this.instance.Stand.RemoveTag(Tags.ASSIGNED_TOWER_PART_STAND_TAG);
         this.instance.Stand.RemoveTag(Tags.PLAYER_ASSIGNED_TOWER_PART_STAND_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
         this.instance.Stand.SetAttribute(ETowerPartStandAttributes.OWNER_ID, undefined);
-        
+
+        /// Tower currency button cleanup
+        this.instance.TowerCurrencyButton.RemoveTag(Tags.TOWER_CURRENCY_BUTTON_TAG);
+        this.instance.TowerCurrencyButton.RemoveTag(Tags.PLAYER_CURRENCY_BUTTON_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
+        this.instance.TowerCurrencyButton.SetAttribute(ETowerCurrencyButtonAttributes.OWNER_ID, undefined);
+
         const player = Players.GetPlayerByUserId(this.attributes[EPlotAttributes.OWNER_ID]);
         if (player) {
             this.instance.RemovePersistentPlayer(player);

@@ -1,5 +1,6 @@
 import { UserId } from "@common/shared/utils/TypeWrapper.utils"
 import { TowerPartStandInstance } from "./TowerPartStand.instance";
+import { TowerCurrencyButtonInstance } from "./TowerCurrencyButton.instance";
 
 export interface PlotInstance extends Model {
     Spawn: BasePart;
@@ -9,6 +10,7 @@ export interface PlotInstance extends Model {
     Stand: TowerPartStandInstance;
     Origin: BasePart;
     TowerOrigin: BasePart;
+    TowerCurrencyButton: TowerCurrencyButtonInstance;
 }
 
 export enum EPlotAttributes {
