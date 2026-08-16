@@ -24,35 +24,53 @@ function getAutomaticTowerPartData(towerPart: ETowerParts): IAutomaticTowerPartD
 }
 
 const ManualTowerPartsData: Record<ETowerParts, IManualTowerPartData> = {
-    [ETowerParts.TOWER_PART_1]: {
-        displayName: "Tower Part 1",
+    [ETowerParts.CARDBOARD_TOWER_FUNDATION]: {
+        displayName: "Cardboard Tower Foundation",
         price: 1000,
         workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 10,
     },
-    [ETowerParts.TOWER_PART_2]: {
-        displayName: "Tower Part 2",
+    [ETowerParts.CARDBOARD_TOWER_FLOOR1]: {
+        displayName: "Cardboard Tower Floor 1",
         price: 2000,
         workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 20,
     },
-    [ETowerParts.TOWER_PART_3]: {
-        displayName: "Tower Part 3",
+    [ETowerParts.CARDBOARD_TOWER_FLOOR2]: {
+        displayName: "Cardboard Tower Floor 2",
         price: 3000,
         workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 30,
     },
-    [ETowerParts.TOWER_PART_4]: {
-        displayName: "Tower Part 4",
+    [ETowerParts.CARDBOARD_TOWER_ROOF]: {
+        displayName: "Cardboard Tower Roof",
         price: 4000,
-        workshipProcessor: EWorkshops.WORKER,
+        workshipProcessor: EWorkshops.ARCHITECT,
         timeToProcess: 40,
     },
-    [ETowerParts.TOWER_PART_5]: {
-        displayName: "Tower Part 5",
+    [ETowerParts.WOODEN_TOWER_FUNDATION]: {
+        displayName: "Wooden Tower Foundation",
         price: 5000,
         workshipProcessor: EWorkshops.WORKER,
         timeToProcess: 50,
+    },
+    [ETowerParts.WOODEN_TOWER_FLOOR1]: {
+        displayName: "Wooden Tower Floor 1",
+        price: 6000,
+        workshipProcessor: EWorkshops.WORKER,
+        timeToProcess: 60,
+    },
+    [ETowerParts.WOODEN_TOWER_FLOOR2]: {
+        displayName: "Wooden Tower Floor 2",
+        price: 7000,
+        workshipProcessor: EWorkshops.WORKER,
+        timeToProcess: 70,
+    },
+    [ETowerParts.WOODEN_TOWER_ROOF]: {
+        displayName: "Wooden Tower Roof",
+        price: 8000,
+        workshipProcessor: EWorkshops.WORKER,
+        timeToProcess: 80,
     },
 }
 

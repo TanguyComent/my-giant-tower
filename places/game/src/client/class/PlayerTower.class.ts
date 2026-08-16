@@ -50,7 +50,7 @@ export class PlayerTower {
         this.removeTopPartIfAtLimit();
 
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
-        const height = towerPartModel.GetExtentsSize().Y;
+        const height = towerPartModel.BoundingBox.Size.Y;
 
         towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height / 2, 0)));
         towerPartModel.Parent = this.model;
@@ -77,7 +77,7 @@ export class PlayerTower {
         this.removeTopPartIfAtLimit();
 
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
-        const height = towerPartModel.GetExtentsSize().Y;
+        const height = towerPartModel.BoundingBox.Size.Y;
 
         towerPartModel.PivotTo(this.baseCFrame.mul(new CFrame(0, -height / 2, 0)));
         towerPartModel.Parent = this.model;
@@ -96,7 +96,7 @@ export class PlayerTower {
 
     private stackOnTop(towerPart: ETowerParts): Model {
         const towerPartModel = TowerPartsUtils.getTowerPartModelClone(towerPart);
-        const height = towerPartModel.GetExtentsSize().Y;
+        const height = towerPartModel.BoundingBox.Size.Y;
         towerPartModel.PivotTo(this.getTopCFrame().add(new Vector3(0, height / 2, 0)));
         towerPartModel.Parent = this.model;
 
