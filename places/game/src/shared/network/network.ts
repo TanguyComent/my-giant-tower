@@ -5,6 +5,7 @@ import { UserId } from "@common/shared/utils/TypeWrapper.utils"
 
 interface ClientToServerEvents {
     syncerLoaded: () => void;
+    collectTowerCurrency: () => void;
     tower: {
         requestSync: (ownerId: UserId) => void,
     }

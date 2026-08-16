@@ -24,6 +24,10 @@ export namespace TowerPartsUtils {
         return modelClone;
     }
 
+    export function getTowerPartCurrencyGeneration(towerPart: ETowerParts): number {
+        return TowerPartsData[towerPart].currencyGeneration;
+    }
+
     export function getRandomTowerPart(): ETowerParts {
         const weightedTowerParts = getWeightedTowerParts();
         return WeightUtils.getRandomDraw(weightedTowerParts).towerPartName;

@@ -53,6 +53,7 @@ export class ProfilesService implements OnStart, OnTick {
         const offlineTime = now - (remoteData.dates.lastDeconnectionDate ?? now);
         const session: IUserSession = {
             currency: remoteData.currency,
+            towerCurrency: remoteData.towerCurrency,
             UtcLastConnection: remoteData.UtcLastConnection,
             UtcOffset: remoteData.UtcOffset,
             dailyStats: remoteData.dailyStats,
@@ -93,6 +94,7 @@ export class ProfilesService implements OnStart, OnTick {
         return {
             currentVersion: 1,
             currency: session.currency,
+            towerCurrency: session.towerCurrency,
             UtcLastConnection: session.UtcLastConnection,
             UtcOffset: session.UtcOffset,
             dailyStats: session.dailyStats,

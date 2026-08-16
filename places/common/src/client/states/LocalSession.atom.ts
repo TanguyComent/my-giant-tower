@@ -6,6 +6,7 @@ import Object from "@rbxts/object-utils"
 
 const defaultProfile: IUserSession = {
     currency: 0,
+    towerCurrency: 0,
     dates: {
         sessionStartDate: DateTime.now().UnixTimestamp,
         lastDeconnectionDate: DateTime.now().UnixTimestamp,
@@ -43,3 +44,4 @@ const defaultProfile: IUserSession = {
 
 export const LocalSessionAtom: Atom<IUserSession> = atom(defaultProfile)
 export const WorkshopStandSelector = (workshopName: EWorkshops, workshopStandName: EWorkshopsStands) => computed(() => LocalSessionAtom().workshops[workshopName][workshopStandName]);
+export const TowerCurrencySelector = computed(() => LocalSessionAtom().towerCurrency);

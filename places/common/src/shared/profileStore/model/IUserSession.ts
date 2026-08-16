@@ -7,6 +7,7 @@ export interface IUserSession {
     dates: IDates;
     UtcOffset: number | undefined;
     currency: number;
+    towerCurrency: number;
     dailyStats: IDailyStats;
     globalStats: IGlobalStats;
     boughtGamePasses: Partial<Record<EGamePasses, IBoughtGamePasse>>;

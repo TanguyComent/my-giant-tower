@@ -5,6 +5,7 @@ import { UnassignedPlotComponent } from "../components/plot/UnassignedPlot.compo
 import { Components } from "@flamework/components"
 import { AssignedPlotComponent } from "../components/plot/AssignedPlot.component"
 import Signal from "@rbxts/signal"
+import { Events } from "../Networking"
 
 @Service()
 export class PlotsService implements OnStart {
@@ -18,6 +19,23 @@ export class PlotsService implements OnStart {
     onStart(): void {
         this.profilesService.onProfileLoaded.Connect((player) => this.assignPlotToPlayer(player))
         this.profilesService.onLastSave.Connect((player) => this.removePlotFromPlayer(player))
+        Events.collectTowerCurrency.connect((player) => this.collectTowerCurrency(player))
+    }
+
+    private collectTowerCurrency(player: Player): void {
+        const towerCurrency = this.profilesService.getField(player.User.Id, ["towerCurrency"]);
+        if (!towerCurrency) return;
+
+        this.profilesService.updateFields(player.User.Id, [
+            {
+                path: ["currency"],
+                provider: (old) => old + towerCurrency,
+            },
+            {
+                path: ["towerCurrency"],
+                provider: () => 0,
+            },
+        ])
     }
 
     private async assignPlotToPlayer(player: Player) {

@@ -9,6 +9,7 @@ export interface IRemoteUserDataV1 {
     UtcOffset: number | undefined;
     dates: IDatesV1;
     currency: number;
+    towerCurrency: number;
     dailyStats: IDailyStatsV1;
     globalStats: IGlobalStatsV1;
     boughtGamePasses: Partial<Record<EGamePasses, IBoughtGamePasseV1>>;

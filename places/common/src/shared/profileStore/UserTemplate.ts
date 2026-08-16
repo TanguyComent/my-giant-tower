@@ -3,6 +3,7 @@ import { LastRemoteDataType } from "@common/server/migrations/MigrationManager";
 export const UserTemplate: LastRemoteDataType = {
     currentVersion: 1,
     currency: 0,
+    towerCurrency: 0,
     UtcLastConnection: undefined,
     dates: {
         sessionStartDate: DateTime.now().UnixTimestamp,
