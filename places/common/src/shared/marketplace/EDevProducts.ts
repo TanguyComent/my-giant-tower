@@ -1,3 +1,4 @@
 export enum EDevProducts {
-    Test = 1
+    CURRENCY_MULTIPLIER_X2 = 1,
+    CURRENCY_MULTIPLIER_X4 = 2
 }
