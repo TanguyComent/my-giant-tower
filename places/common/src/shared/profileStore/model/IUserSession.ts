@@ -1,3 +1,4 @@
+import { ECurrencyMultipliers } from "@common/shared/data/currency-multipliers/ECurrencyMultipliers"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { EWorkshopStandState, EWorkshops, EWorkshopsStands } from "@common/shared/data/workshops/EWorkshops";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
@@ -19,6 +20,7 @@ export interface IUserSession {
     inHandTowerPart?: IInHandTowerPart;
     workshops: Record<EWorkshops, Record<EWorkshopsStands, TWorkshopStand>>
     towerParts: Record<ETowerParts, ITowerPartEntry>;
+    currencyMultiplier: ECurrencyMultipliers;
 }
 
 export interface ITowerPartEntry {

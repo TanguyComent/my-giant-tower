@@ -1,4 +1,5 @@
 import { LastRemoteDataType } from "@common/server/migrations/MigrationManager";
+import { ECurrencyMultipliers } from "../data/currency-multipliers/ECurrencyMultipliers"
 
 export const UserTemplate: LastRemoteDataType = {
     currentVersion: 1,
@@ -24,4 +25,5 @@ export const UserTemplate: LastRemoteDataType = {
     },
     workshops: {},
     towerParts: {},
+    currencyMultiplier: ECurrencyMultipliers.X1,
 }

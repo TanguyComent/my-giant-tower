@@ -1,3 +1,4 @@
+import { ECurrencyMultipliers } from "@common/shared/data/currency-multipliers/ECurrencyMultipliers"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
@@ -18,6 +19,7 @@ export interface IRemoteUserDataV1 {
     inHandTowerPart?: IInHandTowerPartV1;
     workshops: Partial<Record<EWorkshops, Partial<Record<EWorkshopsStands, TWorkshopStand>>>>;
     towerParts: Partial<Record<ETowerParts, ITowerPartEntryV1>>;
+    currencyMultiplier: ECurrencyMultipliers
 }
 
 export interface ITowerPartEntryV1 {

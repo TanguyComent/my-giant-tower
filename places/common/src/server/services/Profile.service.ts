@@ -81,7 +81,8 @@ export class ProfilesService implements OnStart, OnTick {
                     amount: 0
                 }
                 return acc;
-            }, {} as IUserSession["towerParts"])
+            }, {} as IUserSession["towerParts"]),
+            currencyMultiplier: remoteData.currencyMultiplier,
         }
 
         return session;
@@ -131,7 +132,8 @@ export class ProfilesService implements OnStart, OnTick {
                     acc[towerPartName] = towerPartEntry;
                 }
                 return acc;
-            }, {} as LastRemoteDataType["towerParts"])
+            }, {} as LastRemoteDataType["towerParts"]),
+            currencyMultiplier: session.currencyMultiplier,
         }
     }
 

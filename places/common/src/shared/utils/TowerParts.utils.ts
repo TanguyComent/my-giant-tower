@@ -7,8 +7,14 @@ import { ToolsUtils } from "./Tools.utils";
 import { Tags } from "../Tags";
 import { IUserSession } from "../profileStore/model/IUserSession";
 import { MAX_TOWER_PARTS } from "../GlobalConfig";
+import { ECurrencyMultipliers } from "../data/currency-multipliers/ECurrencyMultipliers"
+import { CURRENCY_MULTIPLIERS_DATA } from "../data/currency-multipliers/CurrencyMultipliers.data"
 
 export namespace TowerPartsUtils {
+    export interface ICurrencyMultipliers {
+        premiumMultiplierName: ECurrencyMultipliers;
+    }
+
     export function getTowerPartTool(towerPartName: ETowerParts): Tool {
         const model = getTowerPartModelClone(towerPartName, 0.5);
         const tool = ToolsUtils.createToolFromModel(model);
@@ -24,8 +30,13 @@ export namespace TowerPartsUtils {
         return modelClone;
     }
 
-    export function getTowerPartCurrencyGeneration(towerPart: ETowerParts): number {
-        return TowerPartsData[towerPart].currencyGeneration;
+    export function getTowerPartCurrencyGeneration(towerPart: ETowerParts, multipliers: ICurrencyMultipliers): number {
+        const multiplierDatum = CURRENCY_MULTIPLIERS_DATA[multipliers.premiumMultiplierName];
+        return TowerPartsData[towerPart].currencyGeneration * multiplierDatum.currencyMultiplier;
+    }
+
+    export function getTowerGeneration(tower: IUserSession["towerParts"], multipliers: ICurrencyMultipliers): number {
+        return Object.entries(tower).reduce((acc, [towerPartName, towerPartData]) => acc + getTowerPartCurrencyGeneration(towerPartName, multipliers) * towerPartData.amount, 0);
     }
 
     export function getRandomTowerPart(): ETowerParts {

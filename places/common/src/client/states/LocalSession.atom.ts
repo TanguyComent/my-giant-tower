@@ -1,3 +1,4 @@
+import { ECurrencyMultipliers } from "@common/shared/data/currency-multipliers/ECurrencyMultipliers"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops"
 import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
@@ -39,7 +40,8 @@ const defaultProfile: IUserSession = {
             amount: 0
         }
         return acc;
-    }, {} as IUserSession["towerParts"])
+    }, {} as IUserSession["towerParts"]),
+    currencyMultiplier: ECurrencyMultipliers.X1,
 }
 
 export const LocalSessionAtom: Atom<IUserSession> = atom(defaultProfile)

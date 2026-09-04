@@ -3,15 +3,19 @@ import { ECurrencyMultipliers } from "./ECurrencyMultipliers";
 
 export interface ICurrencyMultiplierData {
     currencyMultiplier: number;
-    productName: EDevProducts
+    productName?: EDevProducts
 }
 
 export const ORDERED_CURRENCY_MULTIPLIERS: ECurrencyMultipliers[] = [
+    ECurrencyMultipliers.X1,
     ECurrencyMultipliers.X2,
     ECurrencyMultipliers.X4,
 ]   
 
 export const CURRENCY_MULTIPLIERS_DATA: Record<ECurrencyMultipliers, ICurrencyMultiplierData> = {
+    [ECurrencyMultipliers.X1]: {
+        currencyMultiplier: 1,
+    },
     [ECurrencyMultipliers.X2]: {
         currencyMultiplier: 2,
         productName: EDevProducts.CURRENCY_MULTIPLIER_X2,
