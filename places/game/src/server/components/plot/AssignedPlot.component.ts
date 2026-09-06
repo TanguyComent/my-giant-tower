@@ -85,10 +85,9 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         const playerSession = this.profilesService.getPlayerSession(this.attributes[EPlotAttributes.OWNER_ID]);
         assert(playerSession, "[AssignedPlotComponent.onTick] - Player session not found.");
 
-        const currencyPerSecond = TowerPartsUtils.getTowerGeneration(playerSession.towerParts, {
+        const generatedCurrency = TowerPartsUtils.getTowerGeneration(playerSession.towerParts, this.timeSinceLastCurrencyGeneration, {
             premiumMultiplierName: playerSession.currencyMultiplier,
         });
-        const generatedCurrency = currencyPerSecond * this.timeSinceLastCurrencyGeneration;
         this.timeSinceLastCurrencyGeneration = 0;
 
         const shouldSyncClient = this.timeSinceLastCurrencySync >= TOWER_CURRENCY_SYNC_INTERVAL;

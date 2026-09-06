@@ -7,7 +7,7 @@ import { Players, RunService, TweenService } from "@rbxts/services";
 import { Events } from "../Networking";
 import { peek, subscribe } from "@rbxts/charm";
 import { TowerCurrencySelector } from "@common/client/states/LocalSession.atom";
-import { TowerCurrencyBillboard } from "../interfaces/billboards/TowerCurrencyBillboard";
+import { TowerCurrencyBillboard } from "../interfaces/billboards/tower-currency/TowerCurrencyBillboard";
 import { TOWER_CURRENCY_SYNC_INTERVAL } from "@common/shared/GlobalConfig";
 
 @Component({
@@ -23,9 +23,6 @@ export class PlayerTowerCurrencyButtonComponent extends DestroyableComponent<Tow
         this.displayedAmount = peek(TowerCurrencySelector);
         this.billboard = new TowerCurrencyBillboard(this.instance.Button, this.displayedAmount);
         this.janitor.Add(() => this.billboard.destroy());
-
-        const unsubscribe = subscribe(TowerCurrencySelector, (newAmount) => this.onTowerCurrencyChanged(newAmount));
-        this.janitor.Add(unsubscribe);
 
         const touchedConnection = this.instance.Button.Touched.Connect((hit) => this.onButtonTouched(hit));
         this.janitor.Add(touchedConnection, "Disconnect");
@@ -55,27 +52,5 @@ export class PlayerTowerCurrencyButtonComponent extends DestroyableComponent<Tow
         const releaseTween = TweenService.Create(button, new TweenInfo(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { CFrame: restCFrame });
         releaseTween.Play();
         releaseTween.Completed.Wait();
-    }
-
-    private onTowerCurrencyChanged(targetAmount: number): void {
-        const token = ++this.lerpToken;
-        const startAmount = this.displayedAmount;
-        const duration = TOWER_CURRENCY_SYNC_INTERVAL;
-
-        task.spawn(() => {
-            let elapsedTime = 0;
-            while (elapsedTime < duration) {
-                if (token !== this.lerpToken) return;
-
-                elapsedTime += RunService.PreRender.Wait()[0];
-                const alpha = math.clamp(elapsedTime / duration, 0, 1);
-                this.displayedAmount = startAmount + (targetAmount - startAmount) * alpha;
-                this.billboard.setAmount(this.displayedAmount);
-            }
-
-            if (token !== this.lerpToken) return;
-            this.displayedAmount = targetAmount;
-            this.billboard.setAmount(targetAmount);
-        });
     }
 }

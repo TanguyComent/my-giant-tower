@@ -11,6 +11,9 @@ import { backpackEquippedItemSelector } from "@common/client/states/Backpack.ato
 import { Tags } from "@common/shared/Tags";
 import { DropEquippedTowerPartButton } from "./DropEquippedTowerPartButton";
 import { CASH_ICON } from "@common/shared/Assets";
+import { NextCurrencyMultiplier } from "./NextCurrencyMultiplier"
+import { CurrencyPackButton } from "./CurrencyPackButton"
+import { ECurrencyPacksProducts } from "@common/shared/marketplace/EDevProducts"
 
 interface Props {
 	shown: React.Binding<boolean>;
@@ -23,12 +26,29 @@ export function App({ shown }: Props) {
     return shownValue && (
         <Wrapper>
             <CurrencyDisplay 
-                Position={new UDim2(0, px(10), 1, -px(20))}
+                Position={new UDim2(0, px(40), 1, -px(40))}
                 AnchorPoint={new Vector2(0, 1)}
                 icon={CASH_ICON}
                 textGradient={GradientUtils.Gradients.Green}
                 currencySelector={computed(() => LocalSessionAtom().currency)}
             />
+
+            <Wrapper
+                Position={new UDim2(0, px(40), 0.5, 0)}
+                AnchorPoint={new Vector2(0, 0.5)}
+                Size={new UDim2(0.15, 0, 0.5, 0)}
+            >
+                <uilistlayout 
+                    FillDirection={Enum.FillDirection.Vertical}
+                    HorizontalAlignment={Enum.HorizontalAlignment.Center}
+                    VerticalAlignment={Enum.VerticalAlignment.Center}
+                    Padding={new UDim(0, px(20))}
+                />
+                <NextCurrencyMultiplier />
+                <CurrencyPackButton productName={ECurrencyPacksProducts.CURRENCY_PACK_1} />
+                <CurrencyPackButton productName={ECurrencyPacksProducts.CURRENCY_PACK_2} />
+                <CurrencyPackButton productName={ECurrencyPacksProducts.CURRENCY_PACK_3} />
+            </Wrapper>
 
             <DropEquippedTowerPartButton />
         </Wrapper>

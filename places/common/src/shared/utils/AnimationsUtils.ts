@@ -2,6 +2,7 @@ import { RunService } from "@rbxts/services";
 
 export namespace AnimationsUtils {
     export namespace Easing {
+        export const Linear = (t: number) => t;
         export const SmoothStep = (t: number) => t * t * (3 - 2 * t);
     }
 

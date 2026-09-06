@@ -30,13 +30,13 @@ export namespace TowerPartsUtils {
         return modelClone;
     }
 
-    export function getTowerPartCurrencyGeneration(towerPart: ETowerParts, multipliers: ICurrencyMultipliers): number {
+    export function getTowerPartCurrencyGeneration(towerPart: ETowerParts, duration: number, multipliers: ICurrencyMultipliers): number {
         const multiplierDatum = CURRENCY_MULTIPLIERS_DATA[multipliers.premiumMultiplierName];
-        return TowerPartsData[towerPart].currencyGeneration * multiplierDatum.currencyMultiplier;
+        return TowerPartsData[towerPart].currencyGeneration * multiplierDatum.currencyMultiplier * duration;
     }
 
-    export function getTowerGeneration(tower: IUserSession["towerParts"], multipliers: ICurrencyMultipliers): number {
-        return Object.entries(tower).reduce((acc, [towerPartName, towerPartData]) => acc + getTowerPartCurrencyGeneration(towerPartName, multipliers) * towerPartData.amount, 0);
+    export function getTowerGeneration(tower: IUserSession["towerParts"], duration: number, multipliers: ICurrencyMultipliers): number {
+        return Object.entries(tower).reduce((acc, [towerPartName, towerPartData]) => acc + getTowerPartCurrencyGeneration(towerPartName, duration, multipliers) * towerPartData.amount, 0);
     }
 
     export function getRandomTowerPart(): ETowerParts {

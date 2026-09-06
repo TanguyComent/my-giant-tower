@@ -12,7 +12,7 @@ export class ProductPricesService implements OnTick {
     private allProductFetched: boolean = false;
     private allPassesFetched: boolean = false;
 
-    private fetchInterval: number = 30; // seconds
+    private fetchInterval: number = 5; // seconds
     private lastFetchAttempt: number = this.fetchInterval;
 
     onTick(dt: number): void {
@@ -46,7 +46,7 @@ export class ProductPricesService implements OnTick {
                         return {
                             ...old,
                             [devProduct]: {
-                                price: price,
+                                priceText: `${price}`,
                                 initialized: true,
                             }
                         }
@@ -55,7 +55,7 @@ export class ProductPricesService implements OnTick {
                     allProductInitialized = false;
                 }
             } catch {
-                print(`Failed to fetch product info for dev product id ${devProduct}`);
+                warn(`Failed to fetch product info for dev product id ${devProduct}`);
                 allProductInitialized = false;
             }
         }

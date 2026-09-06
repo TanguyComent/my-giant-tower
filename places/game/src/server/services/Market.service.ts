@@ -3,17 +3,21 @@ import { PlayerService } from "./Player.service";
 import { MarketplaceService, Players } from "@rbxts/services";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 import { ECurrencyMultipliers } from "@common/shared/data/currency-multipliers/ECurrencyMultipliers"
-import { EDevProducts } from "@common/shared/marketplace/EDevProducts"
+import { ECurrencyPacksProducts, EDevProducts } from "@common/shared/marketplace/EDevProducts"
 import Object from "@rbxts/object-utils"
 import { CURRENCY_MULTIPLIERS_DATA } from "@common/shared/data/currency-multipliers/CurrencyMultipliers.data"
 import { ProfilesService } from "./Profile.service"
 import { CurrencyMultiplierUtils } from "@common/shared/utils/CurrencyMultiplier.utils"
+import { TowerPartsUtils } from "@common/shared/utils/TowerParts.utils"
+import { CURRENCY_PACKS_DATA } from "@common/shared/data/currency-packs/CurrencyPacks.data"
 
 @Service()
 export class MarketService implements OnStart {
     
     private purchaseCallbacks: Record<number, (player: Player, receiptInfo: ReceiptInfo) => Enum.ProductPurchaseDecision> = {
-        
+        [ECurrencyPacksProducts.CURRENCY_PACK_1]: (player, receiptInfo) => this.awardCurrency(player, ECurrencyPacksProducts.CURRENCY_PACK_1, receiptInfo),
+        [ECurrencyPacksProducts.CURRENCY_PACK_2]: (player, receiptInfo) => this.awardCurrency(player, ECurrencyPacksProducts.CURRENCY_PACK_2, receiptInfo),
+        [ECurrencyPacksProducts.CURRENCY_PACK_3]: (player, receiptInfo) => this.awardCurrency(player, ECurrencyPacksProducts.CURRENCY_PACK_3, receiptInfo),
     } 
 
     constructor(
@@ -42,6 +46,21 @@ export class MarketService implements OnStart {
         return this.validatePurchase(receiptInfo, success);
     }
 
+    private awardCurrency(player: Player, productName: ECurrencyPacksProducts, receiptInfo: ReceiptInfo): Enum.ProductPurchaseDecision {
+        const playerSession = this.profilesService.getPlayerSession(player.User.Id);
+        if (!playerSession) return this.validatePurchase(receiptInfo, false);
+
+        const datum = CURRENCY_PACKS_DATA[productName];
+        const duration = datum.duration;
+
+        const generatedCurrency = TowerPartsUtils.getTowerGeneration(playerSession.towerParts, duration, {
+            premiumMultiplierName: playerSession.currencyMultiplier,
+        });
+        const reward = math.max(datum.minimumAwarded, generatedCurrency);
+
+        const success = this.profilesService.updateField(player.User.Id, ["currency"], (old) => old + reward);
+        return this.validatePurchase(receiptInfo, success);
+    }
 
     /* Utility */
 

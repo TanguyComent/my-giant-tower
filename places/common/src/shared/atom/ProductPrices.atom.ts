@@ -3,14 +3,14 @@ import { EDevProducts } from "../marketplace/EDevProducts"
 import { atom, Atom } from "@rbxts/charm"
 
 interface IDevProductPrice {
-    price: number;
+    priceText: string;
     initialized: boolean;
 }
 
 function createDefaultDevProductPrices(): Record<EDevProducts, IDevProductPrice> {
     return Object.values(EDevProducts).reduce((acc, devProduct) => {
         acc[devProduct] = {
-            price: 99,
+            priceText: "N/A",
             initialized: false,
         }
 

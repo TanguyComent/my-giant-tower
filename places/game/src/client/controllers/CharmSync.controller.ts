@@ -26,19 +26,23 @@ export class CharmSyncController implements OnStart {
 
     private onProductPriceUpdate() {
         DevProductsPricesAtom((old) => {
-            return Object.entries(old).reduce((acc, [devProduct, priceInfo]) => {
-                acc[tonumber(devProduct) as EDevProducts] = priceInfo;
-                return acc;
-            }, {} as Record<EDevProducts, { price: number; initialized: boolean }>)
+            return {
+                ...Object.entries(old).reduce((acc, [devProduct, priceInfo]) => {
+                    acc[tonumber(devProduct) as EDevProducts] = priceInfo;
+                    return acc;
+                }, {} as Record<EDevProducts, { priceText: string; initialized: boolean }>)
+            }
         })
     }
 
     private onGamePassPriceUpdate() {
         GamePassPricesAtom((old) => {
-            return Object.entries(old).reduce((acc, [gamePass, priceInfo]) => {
-                acc[tonumber(gamePass) as EGamePasses] = priceInfo;
-                return acc;
-            }, {} as Record<EGamePasses, { price: number; initialized: boolean }>)
+            return {
+                ...Object.entries(old).reduce((acc, [gamePass, priceInfo]) => {
+                    acc[tonumber(gamePass) as EGamePasses] = priceInfo;
+                    return acc;
+                }, {} as Record<EGamePasses, { price: number; initialized: boolean }>)
+            }
         })
     }
 }
