@@ -9,6 +9,8 @@ import { peek, subscribe } from "@rbxts/charm";
 import { TowerCurrencySelector } from "@common/client/states/LocalSession.atom";
 import { TowerCurrencyBillboard } from "../interfaces/billboards/tower-currency/TowerCurrencyBillboard";
 import { TOWER_CURRENCY_SYNC_INTERVAL } from "@common/shared/GlobalConfig";
+import { FollowingImage } from "../interfaces/following-billboard/FollowingImage"
+import { CASH_ICON } from "@common/shared/Assets"
 
 @Component({
     tag: Tags.PLAYER_CURRENCY_BUTTON_TAG(Players.LocalPlayer.User.Id)
@@ -37,7 +39,18 @@ export class PlayerTowerCurrencyButtonComponent extends DestroyableComponent<Tow
             this.isPressAnimationPlaying = false;
         });
 
+        this.dropCashImages(8);
         Events.collectTowerCurrency();
+    }
+
+    private dropCashImages(amount: number) {
+        for (let i = 0; i < amount; i++) {
+            const initialCFrame = this.instance.Button.CFrame;
+            const angle = i * (math.pi * 2 / amount);
+            const offset = new Vector3(math.cos(angle), 0, math.sin(angle)).mul(4);
+            const targetCFrame = initialCFrame.mul(new CFrame(offset));
+            new FollowingImage(initialCFrame, targetCFrame, CASH_ICON);
+        }
     }
 
     private async playPressAnimation(): Promise<void> {

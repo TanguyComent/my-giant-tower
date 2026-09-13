@@ -1,7 +1,6 @@
 import React from "@rbxts/react";
-import { BaseBillboard } from "@common/shared/interfaces/components/BaseBillboard";
-import { FormatUtils } from "@common/shared/utils/Format.utils";
 import { App } from "./components/App"
+import { BaseBillboard } from "@common/shared/interfaces/classes/BaseBillboard"
 
 export class TowerCurrencyBillboard extends BaseBillboard {
     constructor(adornee: PVInstance, initialAmount: number) {

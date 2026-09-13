@@ -146,9 +146,8 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
             ownerId: this.attributes[EPlotAttributes.OWNER_ID],
             processedTowerPart: processingTowerPart
         });
-        const standDatum = WorkshopStandsData[workshopStandName];
 
-        const standPivot = this.instance.Origin.CFrame.ToWorldSpace(standDatum.plotRelativeCFrame);
+        const standPivot = this.instance.WorkshopPositions[workshopStandName].CFrame;
         workshopStandModel.PivotTo(standPivot);
         workshopStandModel.Parent = this.workshopFolders;
 
@@ -183,7 +182,6 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
             workshopStandName: workshopStandName,
             ownerId: this.attributes[EPlotAttributes.OWNER_ID]
         });
-        const standDatum = WorkshopStandsData[workshopStandName];
 
         workshopStandModel.GetDescendants().forEach((descendant) => {
             if (descendant.IsA("BasePart")) {
@@ -193,7 +191,7 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         })
 
         this.translucentWorkshopsRef[workshopName] = workshopStandModel;
-        const standPivot = this.instance.Origin.CFrame.ToWorldSpace(standDatum.plotRelativeCFrame);
+        const standPivot = this.instance.WorkshopPositions[workshopStandName].CFrame;
         workshopStandModel.PivotTo(standPivot);
         workshopStandModel.Parent = this.workshopFolders;
         workshopStandModel.AddTag(Tags.UNLOCKABLE_WORKSHOP_STAND_TAG);

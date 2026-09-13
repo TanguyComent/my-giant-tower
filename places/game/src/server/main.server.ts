@@ -16,11 +16,14 @@ print(`Server stating in version ${GAME_VERSION}`)
 const plotsFolder = Workspace.WaitForChild("Plots") as Folder
 const typeGuard = Flamework.createGuard<IPlotInstance>()
 for (const plot of plotsFolder.GetChildren()) {
-    if (!typeGuard(plot)) {
-        warn(`[main.server] - Plot instance ${plot.Name} is not of type PlotInstance. Please check the instance.`);
+    const plotModel = plot.FindFirstChild("Plot") as Model;
+
+    if (!typeGuard(plotModel)) {
+        warn(`[main.server] - Plot instance ${plotModel.GetFullName()} is not of type PlotInstance. Please check the instance.`);
+        continue;
     }
 
-    const typedPlot = plot as IPlotInstance /// Safe because of the type guard above
+    const typedPlot = plotModel /// Safe because of the type guard above
     typedPlot.ModelStreamingMode = Enum.ModelStreamingMode.PersistentPerPlayer
     typedPlot.SetAttribute(EPlotAttributes.PLOT_ID, GenerateUUID.generateHexSegment())
     typedPlot.AddTag(Tags.PLOT_TAG);
