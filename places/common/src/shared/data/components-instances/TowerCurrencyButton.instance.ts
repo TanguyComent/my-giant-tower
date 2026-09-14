@@ -1,6 +1,7 @@
 import { UserId } from "@common/shared/utils/TypeWrapper.utils";
 
 export interface TowerCurrencyButtonInstance extends Model {
+    Zone: BasePart;
     Button: BasePart;
 }
 

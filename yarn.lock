@@ -154,6 +154,11 @@
   resolved "https://registry.yarnpkg.com/@rbxts/ui-labs/-/ui-labs-2.4.2.tgz#8b7c518a3c228e00aa6d920d845d133cf8110a13"
   integrity sha512-9cyzDYN4mM7KSupZpbHRCUWCfSHzy8LCqa9Czys2jaKYUCn8oV4j5AE+5jTrHD/8RcltP5EvCSFIFwB0N/NfxA==
 
+"@rbxts/zone-plus@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@rbxts/zone-plus/-/zone-plus-3.2.0.tgz#fcab456134ae937f36219fefed86ee3dc1f179a6"
+  integrity sha512-myxs7QXMVCCPhOpUzaoA/01ZCEG/6TBYRNk6LwksUvSp9bONnIpvEZYEazuWnIDwiOEIw/T9kCPY/7FGjMOvsA==
+
 "@roblox-ts/luau-ast@=2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@roblox-ts/luau-ast/-/luau-ast-2.0.0.tgz#651ba0be8297bf50b603bd9fd88205fa75ebe0a4"

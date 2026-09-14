@@ -36,6 +36,7 @@
     "@rbxts/services": "^1.5.5",
     "@rbxts/signal": "^1.1.1",
     "@rbxts/topbar-plus": "^3.2.5",
-    "@rbxts/ui-labs": "^2.4.0"
+    "@rbxts/ui-labs": "^2.4.0",
+		"@rbxts/zone-plus": "^3.2.0"
   }
 }
