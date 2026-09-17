@@ -12,19 +12,25 @@ import { TOWER_CURRENCY_SYNC_INTERVAL } from "@common/shared/GlobalConfig";
 import { FollowingImage } from "../interfaces/following-billboard/FollowingImage"
 import { CASH_ICON } from "@common/shared/Assets"
 import { BaseSinglePressButton } from "./abstract/button/BaseSinglePressButton.component"
+import { BasePressButton } from "./abstract/button/BasePressButton.component"
 
 @Component({
     tag: Tags.PLAYER_CURRENCY_BUTTON_TAG(Players.LocalPlayer.User.Id)
 })
 export class PlayerTowerCurrencyButtonComponent extends BaseSinglePressButton<TowerCurrencyButtonAttributes, TowerCurrencyButtonInstance> implements OnStart, OnRender {
     private billboard!: TowerCurrencyBillboard;
-    private displayedAmount = 0;
+    private lastCurrencyState = 1; /// Pressable state
 
     onStart(): void {
         super.onStart();
-        this.displayedAmount = peek(TowerCurrencySelector);
-        this.billboard = new TowerCurrencyBillboard(this.instance.Button, this.displayedAmount);
         this.janitor.Add(() => this.billboard.destroy());
+        
+        const towerCurrencyAmount = peek(TowerCurrencySelector);
+        this.billboard = new TowerCurrencyBillboard(this.instance.Button, towerCurrencyAmount);
+        this.janitor.Add(() => this.billboard.destroy());
+        this.onTowerCurrencyAmountUpdated(towerCurrencyAmount);
+        const unsubscribe = subscribe(TowerCurrencySelector, (newAmount) => this.onTowerCurrencyAmountUpdated(newAmount));
+        this.janitor.Add(() => unsubscribe());
     }
 
     onRender(dt: number): void {
@@ -46,6 +52,21 @@ export class PlayerTowerCurrencyButtonComponent extends BaseSinglePressButton<To
             const offset = new Vector3(math.cos(angle), 0, math.sin(angle)).mul(4);
             const targetCFrame = initialCFrame.mul(new CFrame(offset));
             new FollowingImage(initialCFrame, targetCFrame, CASH_ICON);
+        }
+    }
+
+    private onTowerCurrencyAmountUpdated(newAmount: number) {
+        const isPressable = this.lastCurrencyState > 0;
+        this.lastCurrencyState = newAmount;
+        
+        if (newAmount <= 0 && isPressable) {
+            this.setPressable(false);
+            this.animateColorTransition(BasePressButton.ButtonColors.Grey, 0.22);
+        } 
+
+        if (newAmount > 0 && !isPressable) {
+            this.setPressable(true);
+            this.animateColorTransition(BasePressButton.ButtonColors.Green, 0.22);
         }
     }
 }

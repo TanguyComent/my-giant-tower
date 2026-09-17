@@ -16,6 +16,11 @@ export namespace Palette {
             new ColorSequenceKeypoint(0.5, Color3.fromRGB(100, 230, 120)),
             new ColorSequenceKeypoint(1, Color3.fromRGB(60, 200, 100)),
         ]),
+        green2: new ColorSequence([
+            new ColorSequenceKeypoint(0, Color3.fromHex("#B6DE23")),
+            new ColorSequenceKeypoint(0.2, Color3.fromHex("#B6DE23")),
+            new ColorSequenceKeypoint(1, Color3.fromHex("#4ED344")),
+        ]),
         blue: new ColorSequence([
             new ColorSequenceKeypoint(0, Color3.fromRGB(170, 220, 255)),
             new ColorSequenceKeypoint(0.5, Color3.fromRGB(60, 140, 255)),

@@ -12,7 +12,7 @@ export interface IPressButtonInstance extends Model {
 @Component()
 export abstract class BasePressButton<A extends {} = {}, I extends IPressButtonInstance = IPressButtonInstance> extends DestroyableComponent<A, I> {
     protected static ButtonColors = {
-        Green: Color3.fromRGB(145, 212, 1),
+        Green: Color3.fromRGB(0, 255, 0),
         Yellow: Color3.fromRGB(255, 213, 0),
         Red: Color3.fromRGB(202, 87, 87),
         Grey: Color3.fromRGB(149, 137, 123),

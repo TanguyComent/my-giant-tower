@@ -16,6 +16,7 @@ export interface PlotInstance extends Model {
     WorkshopPositions: Folder & Record<EWorkshopsStands, BasePart>;
     FreeReward: Folder & {
         Button: FreeRewardButtonInstance;
+        BillboardPart: BasePart;
     }
 }
 

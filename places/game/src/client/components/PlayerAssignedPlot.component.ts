@@ -8,12 +8,44 @@ import { PlayerTowerPartStandComponent } from "./PlayerTowerPartStand.component"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { DestroyableComponent } from "@common/shared/components/BaseComponents";
 import { ClassicProximityPrompt } from "../interfaces/proximity-prompts/classic-proximity-prompt";
+import { TextBillboard } from "../interfaces/text-billboard"
+import { Palette } from "@common/shared/Palette"
 
 @Component({
     tag: Tags.PLAYER_ASSIGNED_PLOT_TAG(Players.LocalPlayer.User.Id)
 })
 export class PlayerAssignedPlotComponent extends DestroyableComponent<AssignedPlotAttributes, PlotInstance> implements OnStart {
     private spinTowerPartsLeverProximityPrompt: ProximityPrompt = ClassicProximityPrompt.Create();
+    private freeRewardChestBillboard = new TextBillboard(this.instance.FreeReward.BillboardPart, [
+        {
+            gradientColor: Palette.ColorSequences.green2,
+            text: "Free money every",
+            strokeColor: Palette.Colors.black,
+            strokeSize: 2,
+            weightSize: 1.2,
+        },
+        {
+            gradientColor: Palette.ColorSequences.green2,
+            text: "10 minutes!",
+            strokeColor: Palette.Colors.black,
+            strokeSize: 2,
+            weightSize: 1.2,
+        },
+        {
+            gradientColor: Palette.ColorSequences.white,
+            text: "Like the game",
+            strokeColor: Palette.Colors.black,
+            strokeSize: 2,
+            weightSize: 1,
+        },
+        {
+            gradientColor: Palette.ColorSequences.white,
+            text: "Join the group.",
+            strokeColor: Palette.Colors.black,
+            strokeSize: 2,
+            weightSize: 1,
+        },
+    ], UDim2.fromScale(20, 4));
 
     onStart(): void {
         this.setupLeverProximityPrompt(this.instance.Lever);
