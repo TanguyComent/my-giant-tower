@@ -1,7 +1,7 @@
 import { OnStart, Service } from "@flamework/core"
 import { ProfilesService } from "./Profile.service"
 import { Events } from "../Networking"
-import { FREE_REWARD_CLAIM_COOLDOWN } from "@common/shared/GlobalConfig"
+import { FREE_REWARD_CLAIM_COOLDOWN, GAME_GROUP_ID } from "@common/shared/GlobalConfig"
 import { TowerPartsUtils } from "@common/shared/utils/TowerParts.utils"
 import { FreeRewardsUtils } from "@common/shared/utils/FreeRewards.utils"
 import { FormatUtils } from "@common/shared/utils/Format.utils"
@@ -23,8 +23,13 @@ export class FreeRewardsService implements OnStart {
         const now = DateTime.now().UnixTimestamp;
         
         if (lastClaimedDate + FREE_REWARD_CLAIM_COOLDOWN > now) {
-
             Events.messages.createError(player, `Next free reward available in ${FormatUtils.formatTime((lastClaimedDate + FREE_REWARD_CLAIM_COOLDOWN) - now)}`);
+            return;
+        }
+
+        const isPlayerInGroup = player.IsInGroupAsync(GAME_GROUP_ID);
+        if (!isPlayerInGroup) {
+            Events.messages.createError(player, `You must like the game and join the group!`)
             return;
         }
 

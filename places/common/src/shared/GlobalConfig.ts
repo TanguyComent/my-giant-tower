@@ -2,6 +2,7 @@ import { ReplicatedStorage, RunService } from "@rbxts/services"
 
 export const RELEASE_PLACE_ID = 99736064347580 /// Replace with your actual release place ID
 export const DEVELOP_PLACE_ID = 104271707786564 /// Replace with your actual develop place ID
+export const GAME_GROUP_ID = 1086611711; /// Replace with your actual game group ID
 
 export const GAME_VERSION = "0.0.1"
 
