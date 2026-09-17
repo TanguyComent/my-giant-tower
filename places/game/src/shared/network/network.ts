@@ -18,6 +18,9 @@ interface ClientToServerEvents {
         unlockNextWorkshopStand: (workshopName: EWorkshops) => void,
         depositInHandTowerPart: (workshopName: EWorkshops, workshopStandName: EWorkshopsStands) => void,
     }
+    freeReward: {
+        claim: () => void,
+    }
 }
 
 interface ServerToClientEvents {

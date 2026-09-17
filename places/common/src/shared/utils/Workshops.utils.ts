@@ -1,7 +1,7 @@
 import Object from "@rbxts/object-utils";
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "../data/workshops/EWorkshops";
 import { WorkshopsData } from "../data/workshops/Workshops.data";
-import { IUserSession } from "../profileStore/model/IUserSession";
+import { IPlayerSession } from "../profileStore/model/IPlayerSession";
 import { UserId } from "./TypeWrapper.utils";
 import { EWorkshopStandAttributes } from "../data/components-instances/WorkshopStand.instance";
 import { Tags } from "../Tags";
@@ -40,7 +40,7 @@ export namespace WorkshopsUtils {
         return model;
     }
 
-    export function getNextWorkshopStandToUnlock(workshopName: EWorkshops, sessionWorkshopDatum: IUserSession["workshops"]): EWorkshopsStands | undefined {
+    export function getNextWorkshopStandToUnlock(workshopName: EWorkshops, sessionWorkshopDatum: IPlayerSession["workshops"]): EWorkshopsStands | undefined {
         const workshopDatum = WorkshopsData[workshopName];
         const amountOfUnlockedStands = Object.values(sessionWorkshopDatum[workshopName]).filter((v) => v.state !== EWorkshopStandState.LOCKED).size();
         return workshopDatum.standsOrder[amountOfUnlockedStands]

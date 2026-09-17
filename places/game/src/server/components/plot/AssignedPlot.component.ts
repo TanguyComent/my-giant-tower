@@ -9,7 +9,7 @@ import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/share
 import { WorkshopsUtils } from "@common/shared/utils/Workshops.utils"
 import { WorkshopStandsData } from "@common/shared/data/workshops/WorkshopStands.data"
 import Object from "@rbxts/object-utils"
-import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
+import { IPlayerSession } from "@common/shared/profileStore/model/IPlayerSession"
 import { WorkshopsData } from "@common/shared/data/workshops/Workshops.data"
 import { EWorkshopStandAttributes, IWorkshopStandInstance } from "@common/shared/data/components-instances/WorkshopStand.instance"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
@@ -17,6 +17,7 @@ import { Events } from "../../Networking"
 import { MAX_TOWER_PARTS, TOWER_CURRENCY_GENERATION_INTERVAL, TOWER_CURRENCY_SYNC_INTERVAL } from "@common/shared/GlobalConfig"
 import { TowerPartsUtils } from "@common/shared/utils/TowerParts.utils"
 import { ETowerCurrencyButtonAttributes } from "@common/shared/data/components-instances/TowerCurrencyButton.instance"
+import { EFreeRewardButtonAttributes } from "@common/shared/data/components-instances/FreeRewardButton.instance"
 
 @Component({
     tag: Tags.ASSIGNED_PLOT_TAG
@@ -52,8 +53,11 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
 
         /// Tower currency button initialisation
         this.instance.TowerCurrencyButton.SetAttribute(ETowerCurrencyButtonAttributes.OWNER_ID, this.attributes[EPlotAttributes.OWNER_ID]);
-        this.instance.TowerCurrencyButton.AddTag(Tags.TOWER_CURRENCY_BUTTON_TAG)
         this.instance.TowerCurrencyButton.AddTag(Tags.PLAYER_CURRENCY_BUTTON_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
+
+        /// Free reward button initialisation
+        this.instance.FreeReward.Button.AddTag(Tags.PLAYER_FREE_REWARD_BUTTON_TAG(this.attributes[EPlotAttributes.OWNER_ID]))
+        this.instance.FreeReward.Button.SetAttribute(EFreeRewardButtonAttributes.OWNER_ID, this.attributes[EPlotAttributes.OWNER_ID]);
 
         /// Plot initialisation work here
         this.towerParts = TowerPartsUtils.getInitialTowerFromSession(playerData.towerParts);
@@ -129,6 +133,11 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         this.instance.TowerCurrencyButton.RemoveTag(Tags.PLAYER_CURRENCY_BUTTON_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
         this.instance.TowerCurrencyButton.SetAttribute(ETowerCurrencyButtonAttributes.OWNER_ID, undefined);
 
+        /// Free reward button cleanup
+        this.instance.FreeReward.Button.RemoveTag(Tags.FREE_REWARD_BUTTON_TAG);
+        this.instance.FreeReward.Button.RemoveTag(Tags.PLAYER_FREE_REWARD_BUTTON_TAG(this.attributes[EPlotAttributes.OWNER_ID]));
+        this.instance.FreeReward.Button.SetAttribute(EFreeRewardButtonAttributes.OWNER_ID, undefined);
+
         const player = Players.GetPlayerByUserId(this.attributes[EPlotAttributes.OWNER_ID]);
         if (player) {
             this.instance.RemovePersistentPlayer(player);
@@ -159,7 +168,7 @@ export class AssignedPlotComponent extends BaseComponent<AssignedPlotAttributes,
         }
     }
 
-    public tryCreateWorkshopTranslucentModel(workshopName: EWorkshops, playerSessionRef?: IUserSession) {
+    public tryCreateWorkshopTranslucentModel(workshopName: EWorkshops, playerSessionRef?: IPlayerSession) {
         const playerSession = playerSessionRef ?? this.profilesService.getPlayerSession(this.attributes[EPlotAttributes.OWNER_ID]);
         assert(playerSession, "[AssignedPlotComponent.tryCreateWorkshopTranslucentModel] - Player session not found.");
 

@@ -2,9 +2,9 @@ import { ECurrencyMultipliers } from "@common/shared/data/currency-multipliers/E
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
-import { TWorkshopStand } from "@common/shared/profileStore/model/IUserSession";
+import { TWorkshopStand } from "@common/shared/profileStore/model/IPlayerSession";
 
-export interface IRemoteUserDataV1 {
+export interface IPlayerDataRemoteV1 {
     currentVersion: 1;
     UtcLastConnection: number | undefined;
     UtcOffset: number | undefined;
@@ -20,6 +20,7 @@ export interface IRemoteUserDataV1 {
     workshops: Partial<Record<EWorkshops, Partial<Record<EWorkshopsStands, TWorkshopStand>>>>;
     towerParts: Partial<Record<ETowerParts, ITowerPartEntryV1>>;
     currencyMultiplier: ECurrencyMultipliers
+    lastFreeRewardClaimDate: number;
 }
 
 export interface ITowerPartEntryV1 {

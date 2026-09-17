@@ -1,8 +1,8 @@
-import { IUserSession } from "../profileStore/model/IUserSession";
+import { IPlayerSession } from "../profileStore/model/IPlayerSession";
 
 export namespace PathsUtils {
-    export type AnySessionPath = Path<IUserSession>;
-    export type AnySessionPathValue = PathValue<IUserSession, AnySessionPath>;
+    export type AnySessionPath = Path<IPlayerSession>;
+    export type AnySessionPathValue = PathValue<IPlayerSession, AnySessionPath>;
 
 	export type Path<T> =
 		T extends object

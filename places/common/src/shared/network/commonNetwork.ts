@@ -1,12 +1,12 @@
 import { Networking } from "@flamework/networking"
-import { IUserSession } from "../profileStore/model/IUserSession";
+import { IPlayerSession } from "../profileStore/model/IPlayerSession";
 
 interface CommonClientToServerEvents {
 
 }
 
 interface CommonServerToClientEvents {
-    onProfileLoaded(session: IUserSession): void;
+    onProfileLoaded(session: IPlayerSession): void;
     onFieldUpdated(field: string[], value: unknown): void;
     onFieldsUpdated(fields: Array<{ field: string[], value: unknown }>): void;
     backpack: {
@@ -16,7 +16,7 @@ interface CommonServerToClientEvents {
 
 interface CommonClientToServerFunctions {
     isProfileLoaded(): boolean;
-    getSession(): IUserSession | undefined;
+    getSession(): IPlayerSession | undefined;
 }
 
 interface CommonServerToClientFunctions {

@@ -5,7 +5,7 @@ import { TowerPartsData } from "../data/tower-parts/TowerParts.data";
 import { TowerPartInstance } from "../data/components-instances/TowerPart.instance";
 import { ToolsUtils } from "./Tools.utils";
 import { Tags } from "../Tags";
-import { IUserSession } from "../profileStore/model/IUserSession";
+import { IPlayerSession } from "../profileStore/model/IPlayerSession";
 import { MAX_TOWER_PARTS } from "../GlobalConfig";
 import { ECurrencyMultipliers } from "../data/currency-multipliers/ECurrencyMultipliers"
 import { CURRENCY_MULTIPLIERS_DATA } from "../data/currency-multipliers/CurrencyMultipliers.data"
@@ -35,7 +35,7 @@ export namespace TowerPartsUtils {
         return TowerPartsData[towerPart].currencyGeneration * multiplierDatum.currencyMultiplier * duration;
     }
 
-    export function getTowerGeneration(tower: IUserSession["towerParts"], duration: number, multipliers: ICurrencyMultipliers): number {
+    export function getTowerGeneration(tower: IPlayerSession["towerParts"], duration: number, multipliers: ICurrencyMultipliers): number {
         return Object.entries(tower).reduce((acc, [towerPartName, towerPartData]) => acc + getTowerPartCurrencyGeneration(towerPartName, duration, multipliers) * towerPartData.amount, 0);
     }
 
@@ -51,7 +51,7 @@ export namespace TowerPartsUtils {
         }))
     }
 
-    export function getInitialTowerFromSession(towerParts: IUserSession["towerParts"]): ETowerParts[] {
+    export function getInitialTowerFromSession(towerParts: IPlayerSession["towerParts"]): ETowerParts[] {
         const towerPartsArray: ETowerParts[] = [];
         
         let towerPartsCopy = deepCopy(towerParts);
@@ -66,7 +66,7 @@ export namespace TowerPartsUtils {
         return towerPartsArray;
     }
 
-    function getWeightedTowerPartsFromSession(towerParts: IUserSession["towerParts"]): { towerPartName: ETowerParts; weight: number }[] {
+    function getWeightedTowerPartsFromSession(towerParts: IPlayerSession["towerParts"]): { towerPartName: ETowerParts; weight: number }[] {
         return Object.entries(towerParts).map(([towerPartName, towerPartData]) => {
             if (towerPartData.amount <= 0) return undefined;
             const towerPartDatum = TowerPartsData[towerPartName];

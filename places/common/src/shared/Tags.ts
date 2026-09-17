@@ -16,6 +16,9 @@ export namespace Tags {
     export const TOWER_CURRENCY_BUTTON_TAG = "TowerCurrencyButton"
     export const PLAYER_CURRENCY_BUTTON_TAG = (playerId: UserId) => `Player_${playerId}_${TOWER_CURRENCY_BUTTON_TAG}`
 
+    export const FREE_REWARD_BUTTON_TAG = "FreeRewardButton"
+    export const PLAYER_FREE_REWARD_BUTTON_TAG = (playerId: UserId) => `Player_${playerId}_${FREE_REWARD_BUTTON_TAG}`
+
     export const UNLOCKED_WORKSHOP_STAND_TAG = "WorkshopStand";
     export const UNLOCKABLE_WORKSHOP_STAND_TAG = "UnlockableWorkshopStand";
     export const PROCESSING_WORKSHOP_STAND_TAG = "ProcessingWorkshopStand";

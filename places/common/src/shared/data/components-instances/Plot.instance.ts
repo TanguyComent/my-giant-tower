@@ -2,6 +2,7 @@ import { UserId } from "@common/shared/utils/TypeWrapper.utils"
 import { TowerPartStandInstance } from "./TowerPartStand.instance";
 import { TowerCurrencyButtonInstance } from "./TowerCurrencyButton.instance";
 import { EWorkshopsStands } from "../workshops/EWorkshops"
+import { FreeRewardButtonInstance } from "./FreeRewardButton.instance"
 
 export interface PlotInstance extends Model {
     Spawn: BasePart;
@@ -13,6 +14,9 @@ export interface PlotInstance extends Model {
     TowerOrigin: BasePart;
     TowerCurrencyButton: TowerCurrencyButtonInstance;
     WorkshopPositions: Folder & Record<EWorkshopsStands, BasePart>;
+    FreeReward: Folder & {
+        Button: FreeRewardButtonInstance;
+    }
 }
 
 export enum EPlotAttributes {

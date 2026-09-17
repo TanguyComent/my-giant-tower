@@ -1,11 +1,11 @@
 import { ECurrencyMultipliers } from "@common/shared/data/currency-multipliers/ECurrencyMultipliers"
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart"
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops"
-import { IUserSession } from "@common/shared/profileStore/model/IUserSession"
+import { IPlayerSession } from "@common/shared/profileStore/model/IPlayerSession"
 import { Atom, atom, computed } from "@rbxts/charm"
 import Object from "@rbxts/object-utils"
 
-const defaultProfile: IUserSession = {
+const defaultProfile: IPlayerSession = {
     currency: 0,
     towerCurrency: 0,
     dates: {
@@ -32,18 +32,19 @@ const defaultProfile: IUserSession = {
                 state: EWorkshopStandState.LOCKED,
             }
             return acc2;
-        }, {} as IUserSession["workshops"][typeof workshipName])
+        }, {} as IPlayerSession["workshops"][typeof workshipName])
         return acc;
-    }, {} as IUserSession["workshops"]),
+    }, {} as IPlayerSession["workshops"]),
     towerParts: Object.values(ETowerParts).reduce((acc, towerPartName) => {
         acc[towerPartName] = {
             amount: 0
         }
         return acc;
-    }, {} as IUserSession["towerParts"]),
+    }, {} as IPlayerSession["towerParts"]),
     currencyMultiplier: ECurrencyMultipliers.X1,
+    lastFreeRewardClaimDate: 0,
 }
 
-export const LocalSessionAtom: Atom<IUserSession> = atom(defaultProfile)
+export const LocalSessionAtom: Atom<IPlayerSession> = atom(defaultProfile)
 export const WorkshopStandSelector = (workshopName: EWorkshops, workshopStandName: EWorkshopsStands) => computed(() => LocalSessionAtom().workshops[workshopName][workshopStandName]);
 export const TowerCurrencySelector = computed(() => LocalSessionAtom().towerCurrency);

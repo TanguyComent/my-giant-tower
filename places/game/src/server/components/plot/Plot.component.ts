@@ -11,6 +11,8 @@ export class PlotComponent extends BaseComponent<PlotAttributes, PlotInstance> i
     
     onStart(): void {
         this.instance.Stand.SetAttribute(ETowerPartStandAttributes.PLOT_ID, this.attributes[EPlotAttributes.PLOT_ID]);
-        this.instance.Stand.AddTag(Tags.TOWER_PART_STAND_TAG);    
+        this.instance.Stand.AddTag(Tags.TOWER_PART_STAND_TAG);
+        this.instance.FreeReward.Button.AddTag(Tags.FREE_REWARD_BUTTON_TAG);
+        this.instance.TowerCurrencyButton.AddTag(Tags.TOWER_CURRENCY_BUTTON_TAG);
     }
 }

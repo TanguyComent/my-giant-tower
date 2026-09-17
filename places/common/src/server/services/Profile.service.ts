@@ -1,34 +1,34 @@
 import { Janitor } from "@rbxts/janitor";
 import ProfileStore from "@rbxts/profile-store";
 import { MarketplaceService, Players } from "@rbxts/services";
-import { UserTemplate } from "@common/shared/profileStore/UserTemplate";
+import { PlayerDataRemoteTemplate } from "@common/shared/profileStore/PlayerDataRemoteTemplate";
 import Signal from "@rbxts/signal"
 import { IS_DEVELOP } from "@common/shared/GlobalConfig"
 import { CommonEvents, CommonFunctions } from "../Networking"
 import { OnStart, OnTick, Service } from "@flamework/core"
 import { LastRemoteDataType, Migrator } from "../migrations/MigrationManager";
 import Object, { deepCopy } from "@rbxts/object-utils";
-import { IUserSession } from "@common/shared/profileStore/model/IUserSession";
+import { IPlayerSession } from "@common/shared/profileStore/model/IPlayerSession";
 import { PathsUtils } from "@common/shared/utils/Paths.utils";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 import { EWorkshops, EWorkshopsStands, EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
 import { ETowerParts } from "@common/shared/data/tower-parts/ETowerPart";
 
-type FieldUpdate<P extends PathsUtils.Path<IUserSession>> = {
+type FieldUpdate<P extends PathsUtils.Path<IPlayerSession>> = {
     path: P;
-    provider: (value: PathsUtils.PathValue<IUserSession, P>) => PathsUtils.PathValue<IUserSession, P>;
+    provider: (value: PathsUtils.PathValue<IPlayerSession, P>) => PathsUtils.PathValue<IPlayerSession, P>;
 };
 
 @Service()
 export class ProfilesService implements OnStart, OnTick {
     public readonly janitor = new Janitor()
-    public readonly userStore = ProfileStore.New(`${IS_DEVELOP ? "DEVELOP" : "RELEASE"}-User-Profiles`, UserTemplate);
+    public readonly userStore = ProfileStore.New(`${IS_DEVELOP ? "DEVELOP" : "RELEASE"}-User-Profiles`, PlayerDataRemoteTemplate);
     public readonly profiles = new Map<number, ProfileStore.Profile<LastRemoteDataType, object>>()
-    public readonly playerSessionMap = new Map<number, IUserSession>();
+    public readonly playerSessionMap = new Map<number, IPlayerSession>();
     public readonly onLastSave = new Signal<(player: Player, reason: "Manual" | "External" | "Shutdown") => void>();
 
     public readonly onProfileLoaded = new Signal<(player: Player) => void>();
-    public readonly beforeProfileSaveProviders = new Array<(player: Player, profile: IUserSession) => IUserSession>();
+    public readonly beforeProfileSaveProviders = new Array<(player: Player, profile: IPlayerSession) => IPlayerSession>();
 
     onStart() {
         for (const player of Players.GetPlayers()) {
@@ -47,11 +47,11 @@ export class ProfilesService implements OnStart, OnTick {
 
     onTick(dt: number): void {}
 
-    private transformRemoteDataToSession(player: Player, remoteData: LastRemoteDataType): IUserSession {
+    private transformRemoteDataToSession(player: Player, remoteData: LastRemoteDataType): IPlayerSession {
         const now = DateTime.now().UnixTimestamp;
 
         const offlineTime = now - (remoteData.dates.lastDeconnectionDate ?? now);
-        const session: IUserSession = {
+        const session: IPlayerSession = {
             currency: remoteData.currency,
             towerCurrency: remoteData.towerCurrency,
             UtcLastConnection: remoteData.UtcLastConnection,
@@ -73,22 +73,23 @@ export class ProfilesService implements OnStart, OnTick {
                         state: EWorkshopStandState.LOCKED,
                     }
                     return acc2;
-                }, {} as IUserSession["workshops"][typeof workshipName])
+                }, {} as IPlayerSession["workshops"][typeof workshipName])
                 return acc;
-            }, {} as IUserSession["workshops"]),
+            }, {} as IPlayerSession["workshops"]),
             towerParts: Object.values(ETowerParts).reduce((acc, towerPartName) => {
                 acc[towerPartName] = remoteData.towerParts[towerPartName] ?? {
                     amount: 0
                 }
                 return acc;
-            }, {} as IUserSession["towerParts"]),
+            }, {} as IPlayerSession["towerParts"]),
             currencyMultiplier: remoteData.currencyMultiplier,
+            lastFreeRewardClaimDate: remoteData.lastFreeRewardClaimDate,
         }
 
         return session;
     }
 
-    private transformSessionToRemoteData(player: Player, session: IUserSession): LastRemoteDataType {
+    private transformSessionToRemoteData(player: Player, session: IPlayerSession): LastRemoteDataType {
         this.beforeProfileSaveProviders.forEach((provider) => session = provider(player, session))
         const now = DateTime.now().UnixTimestamp;
 
@@ -134,6 +135,7 @@ export class ProfilesService implements OnStart, OnTick {
                 return acc;
             }, {} as LastRemoteDataType["towerParts"]),
             currencyMultiplier: session.currencyMultiplier,
+            lastFreeRewardClaimDate: session.lastFreeRewardClaimDate,
         }
     }
 
@@ -216,18 +218,18 @@ export class ProfilesService implements OnStart, OnTick {
         return this.playerSessionMap.has(player.User.Id);
     }
 
-    setPlayerSession(playerId: number, data: IUserSession) {
+    setPlayerSession(playerId: number, data: IPlayerSession) {
         this.playerSessionMap.set(playerId, data);
     }
 
-    getPlayerSession(playerId: number): IUserSession | undefined {
+    getPlayerSession(playerId: number): IPlayerSession | undefined {
         return this.playerSessionMap.get(playerId);
     }
 
-    updateField<P extends PathsUtils.Path<IUserSession>>(
+    updateField<P extends PathsUtils.Path<IPlayerSession>>(
         playerId: number,
         path: P,
-        provider: (value: PathsUtils.PathValue<IUserSession, P>) => PathsUtils.PathValue<IUserSession, P>,
+        provider: (value: PathsUtils.PathValue<IPlayerSession, P>) => PathsUtils.PathValue<IPlayerSession, P>,
         refreshClient = true
     ) {
         const data = this.getPlayerSession(playerId);
@@ -247,7 +249,7 @@ export class ProfilesService implements OnStart, OnTick {
         return true
     }
 
-    updateFields<T extends PathsUtils.Path<IUserSession>[]>(
+    updateFields<T extends PathsUtils.Path<IPlayerSession>[]>(
         playerId: number,
         fields: { [K in keyof T]: FieldUpdate<T[K]> },
         refreshClient = true
@@ -277,20 +279,20 @@ export class ProfilesService implements OnStart, OnTick {
         return true;
     }
 
-    setField<P extends PathsUtils.Path<IUserSession>>(
+    setField<P extends PathsUtils.Path<IPlayerSession>>(
         playerId: number,
         field: P,
-        value: PathsUtils.PathValue<IUserSession, P>,
+        value: PathsUtils.PathValue<IPlayerSession, P>,
         refreshClient = true
     ) {
         return this.updateField(playerId, field, () => value, refreshClient);
     }
 
-    setFields<P extends PathsUtils.Path<IUserSession>>(
+    setFields<P extends PathsUtils.Path<IPlayerSession>>(
         playerId: number,
         fields: Array<{
             field: P,
-            value: PathsUtils.PathValue<IUserSession, P>
+            value: PathsUtils.PathValue<IPlayerSession, P>
         }>,
         refreshClient = true
     ) {
@@ -302,10 +304,10 @@ export class ProfilesService implements OnStart, OnTick {
         }), refreshClient);
     }
 
-    getField<P extends PathsUtils.Path<IUserSession>>(
+    getField<P extends PathsUtils.Path<IPlayerSession>>(
         playerId: number,
         field: P
-    ): PathsUtils.PathValue<IUserSession, P> | undefined {
+    ): PathsUtils.PathValue<IPlayerSession, P> | undefined {
         const data = this.getPlayerSession(playerId);
         if (!data) return undefined;
         return PathsUtils.get(data, field);
@@ -369,7 +371,7 @@ export class ProfilesService implements OnStart, OnTick {
     }
 
     private resetDailyStats(userId: number) {
-        this.setField(userId, ["dailyStats"], deepCopy(UserTemplate.dailyStats));
+        this.setField(userId, ["dailyStats"], deepCopy(PlayerDataRemoteTemplate.dailyStats));
     }
 
     private actualizeLastConnectionDate(userId: number) {

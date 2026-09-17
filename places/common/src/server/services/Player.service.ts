@@ -3,7 +3,7 @@ import { ProfilesService } from "./Profile.service";
 import Object, { values } from "@rbxts/object-utils";
 import { EGamePasses } from "@common/shared/marketplace/EGamePasses";
 import { MarketplaceService } from "@rbxts/services";
-import { IPurchase } from "@common/shared/profileStore/model/IUserSession";
+import { IPurchase } from "@common/shared/profileStore/model/IPlayerSession";
 
 @Service()
 export class PlayerService implements OnStart {

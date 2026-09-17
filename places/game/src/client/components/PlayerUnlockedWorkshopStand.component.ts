@@ -6,7 +6,7 @@ import { OnStart } from "@flamework/core";
 import { peek, subscribe } from "@rbxts/charm";
 import { Players } from "@rbxts/services";
 import { WorkshopStandSelector } from "../states/LocalSession.atom";
-import { IUnlockedWorkshopStand, TWorkshopStand } from "@common/shared/profileStore/model/IUserSession";
+import { IUnlockedWorkshopStand, TWorkshopStand } from "@common/shared/profileStore/model/IPlayerSession";
 import { EWorkshopStandState } from "@common/shared/data/workshops/EWorkshops";
 import { ClassicProximityPrompt } from "../interfaces/proximity-prompts/classic-proximity-prompt";
 import { BackpackUtils } from "@common/shared/utils/Backpack.utils";
